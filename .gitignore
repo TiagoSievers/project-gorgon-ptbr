@@ -1,0 +1,65 @@
+# --- Pipeline (regenerável, pesado) ---
+.cache/
+cache/
+
+# --- Pacotes para jogador (vão no GitHub Release, não no git) ---
+releases/
+pack/
+
+# --- BepInEx zip (~31 MB) — baixar com: make fetch-bepinex-vendor ---
+vendor/BepInExPack_IL2CPP.zip
+
+# --- Plugin C# (build local) ---
+bepinex-plugin/**/bin/
+bepinex-plugin/**/obj/
+bepinex-plugin/**/*.dll
+bepinex-plugin/**/*.pdb
+
+# --- dist/ — versionado: PgTranslateLive.dll + com.pg.translatelive.cfg ---
+# Gerados localmente, não commitar:
+dist/PgPtBr-Installer
+dist/INSTALAR.exe
+build/installer/
+installer/build/
+installer/dist/
+
+# --- Logs do jogo/Steam (podem ter caminhos locais) ---
+Player.log
+*.log
+steam-*.log
+
+# --- Segredos ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- VM / ISO (não pertencem ao repo) ---
+*.iso
+*.vdi
+*.vmdk
+*.vbox-*
+scripts/Mido.sh
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.cursor/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# NOTA: output/Translation/ e output/pt-BR/ são versionados (~35 MB) — ver README.
+# NOTA: dist/PgTranslateLive.dll é versionado (plugin pré-compilado).

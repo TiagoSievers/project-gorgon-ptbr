@@ -1,0 +1,32 @@
+{
+  "files": {
+    "strings_abilities.json": "8f1058ddeb3aee96f7fbf6a2e9309ec4a5bb7fc55659af7cdf20dd6a700b482c",
+    "strings_ai.json": "630e90395b61e5d1205c550deed83a0a40da1641e04b5097636d9e0fa93c5a10",
+    "strings_areas.json": "01713a847c91c26a28dbb6a81ced9657d62318c999994cb7d4f610eb12078617",
+    "strings_attributes.json": "52e46f7b5e83f238471c65ca765fb67e2d587416b71fadb1b3c1875092201461",
+    "strings_directedgoals.json": "19fc6669cd5740540011fedaf0cf93c8f81a66230b65281869557d6e04740d6f",
+    "strings_effects.json": "30bf4bc350d4d5a801bf7ef98cd024fbd5bc4e9f5f4fc793490ddc56bb7e8085",
+    "strings_items.json": "73e65c48a3f733a165ab4294725d1a47c4b6abc457c0a13a97fe21d4d1dfcc49",
+    "strings_lorebookinfo.json": "96f2c320188a649d1914e049d49923d175d0e3c5be675f08752bf6688c6ae420",
+    "strings_lorebooks.json": "7fb70ece478f35235809a09eb72897166492c73baf0816d02fffc74162e4cf4d",
+    "strings_npcs.json": "58f2a4c536eb4d51703593fd2c0cbdd3f97a7f720f9ff534ea1d7124e981d3ef",
+    "strings_playertitles.json": "32b3db52abb5b819db2f40d516877263b7871133d5dc2ebc639bbaf5714ba367",
+    "strings_quests.json": "774d0c7e5a0d7a60e12aae894b8c655a6d6b3a5872ddd707c639313522a5e644",
+    "strings_recipes.json": "847180bfe7df280cc46c97dcf2431600cca90baafccee6c803243bf221d3344d",
+    "strings_requested.json": "b7626d230cad482cb5dc92194e5c4ceacef8c79955db9227d00d8c4f6b5b6a80",
+    "strings_skills.json": "7ba3fd70ffb8f8a9c483be4506538e99cc5c0c441dfe96cbfafcc5b00b1780e7",
+    "strings_storagevaults.json": "62e56cef67af005e8bae7a539beacf0ff9bfbebd423cded4d5c7aeacc756651a",
+    "strings_tsysclientinfo.json": "5c67932f60bbd79ee81bd634087b4e5312dc160da85227ce8b1171d3660a86af",
+    "strings_ui.json": "c9db8fbd552e5db062882af10ce73833da03a9536f6eddab4613a8f1c68ffc2d"
+  },
+  "version": {
+    "CdnFileVersion": "470",
+    "Credits": "Pipeline autom\u00e1tico PG PT-BR (Google Translate) \u2014 revis\u00e3o humana recomendada",
+    "Description": "Tradu\u00e7\u00e3o parcial para portugu\u00eas brasileiro gerada a partir do CDN oficial.",
+    "Format": 1,
+    "LanguageCode": "pt-BR",
+    "Name": "Project Gorgon \u2014 Portugu\u00eas (BR)",
+    "Notes": "Atualize com: make write && make install-official",
+    "Version": "0.2.0"
+  }
+}

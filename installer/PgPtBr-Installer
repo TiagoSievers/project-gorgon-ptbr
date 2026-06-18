@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# Instalador gráfico Project Gorgon PT-BR — dois cliques (zenity)
+set -euo pipefail
+
+find_root() {
+  local dir
+  dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  while [[ "$dir" != "/" ]]; do
+    if [[ -f "$dir/scripts/install.sh" ]]; then
+      echo "$dir"
+      return 0
+    fi
+    dir="$(dirname "$dir")"
+  done
+  return 1
+}
+
+ROOT="$(find_root)" || {
+  echo "Erro: pacote incompleto (scripts/install.sh não encontrado)" >&2
+  exit 1
+}
+SCRIPT_DIR="$ROOT/scripts"
+INSTALL_SH="$SCRIPT_DIR/install.sh"
+PATHS_SH="$SCRIPT_DIR/install-paths.sh"
+VERIFY_SH="$SCRIPT_DIR/verify-install.sh"
+
+die_gui() {
+  zenity --error --width=420 --title="Project Gorgon PT-BR" --text="$1" 2>/dev/null || {
+    echo "Erro: $1" >&2
+    read -r -p "Enter para sair…"
+  }
+  exit 1
+}
+
+need_zenity() {
+  command -v zenity >/dev/null 2>&1 || die_gui "Instale zenity:\n  sudo apt install zenity"
+}
+
+detect_game() {
+  if [[ -f "$PATHS_SH" ]]; then
+  # shellcheck disable=SC1090
+    GAME_DIR="$(bash -c "source \"$PATHS_SH\" && printf '%s' \"\${GAME_DIR:-}\"")" || true
+    echo "${GAME_DIR:-}"
+  fi
+}
+
+pick_game_dir() {
+  local current="${1:-}"
+  local picked=""
+  picked="$(zenity --file-selection --directory \
+    --title="Pasta do jogo Project Gorgon" \
+    ${current:+--filename="$current/"} 2>/dev/null)" || return 1
+  echo "$picked"
+}
+
+run_install() {
+  local game_dir="$1"
+  local log
+  log="$(mktemp /tmp/pg-ptbr-install.XXXXXX.log)"
+  trap 'rm -f "$log"' RETURN
+
+  (
+    export GAME_DIR="$game_dir"
+    export ROOT
+    bash "$INSTALL_SH"
+  ) >"$log" 2>&1 &
+  local pid=$!
+
+  zenity --progress --pulsate --auto-close --no-cancel \
+    --title="Instalando PT-BR…" \
+    --text="BepInEx, plugin e language pack…" 2>/dev/null &
+  local zpid=$!
+
+  if wait "$pid"; then
+    kill "$zpid" 2>/dev/null || true
+    wait "$zpid" 2>/dev/null || true
+    zenity --info --width=500 --title="Instalação finalizada" \
+      --text="Tradução PT-BR instalada com sucesso!\n\nPróximos passos:\n• Configure Launch Options na Steam (detalhes no log)\n• Abra o Project Gorgon na Steam\n• Aceite o language pack PT-BR se o jogo perguntar\n\nClique OK para ver o relatório completo."
+    zenity --text-info \
+      --title="Relatório da instalação" \
+      --filename="$log" \
+      --width=720 --height=480 \
+      --text="Launch Options e verificação — role até o final."
+    return 0
+  fi
+
+  kill "$zpid" 2>/dev/null || true
+  wait "$zpid" 2>/dev/null || true
+  zenity --text-info \
+    --title="Falha na instalação" \
+    --filename="$log" \
+    --width=720 --height=480
+  return 1
+}
+
+run_verify() {
+  local game_dir="$1"
+  local log
+  log="$(mktemp /tmp/pg-ptbr-verify.XXXXXX.log)"
+  trap 'rm -f "$log"' RETURN
+
+  (
+    export GAME_DIR="$game_dir"
+    bash "$VERIFY_SH"
+  ) >"$log" 2>&1 &
+  local pid=$!
+
+  zenity --progress --pulsate --auto-close --no-cancel \
+    --title="Verificando…" 2>/dev/null &
+  local zpid=$!
+
+  if wait "$pid"; then
+    kill "$zpid" 2>/dev/null || true
+    wait "$zpid" 2>/dev/null || true
+    zenity --info --width=460 --title="Verificação concluída" \
+      --text="Verificação OK.\n\nAvisos sobre LogOutput.log são informativos:\no log só existe depois de abrir o jogo, e palavras como \"error\" em sessões antigas são comuns.\n\nClique OK para ver o detalhe."
+    zenity --text-info --title="Relatório da verificação" --filename="$log" --width=640 --height=360
+    return 0
+  fi
+
+  kill "$zpid" 2>/dev/null || true
+  wait "$zpid" 2>/dev/null || true
+  zenity --text-info --title="Verificação com problemas" --filename="$log" --width=640 --height=360
+  return 1
+}
+
+main() {
+  need_zenity
+
+  [[ -f "$INSTALL_SH" ]] || die_gui "Pacote incompleto.\nExtraia o tar.gz inteiro.\nFalta: scripts/install.sh"
+
+  local detected
+  detected="$(detect_game)"
+
+  zenity --question --width=460 --title="Project Gorgon PT-BR" \
+    --text="Instalador da tradução PT-BR\n\n• BepInEx + plugin PgTranslateLive (BepInEx já vem no pacote)\n• Language pack (UI, itens, quests)\n• Requer Project Gorgon na Steam\n\nContinuar?" \
+    || exit 0
+
+  local game_dir="$detected"
+  if [[ -z "$game_dir" ]]; then
+    game_dir="$(pick_game_dir "$HOME")" || exit 0
+  else
+    game_dir="$(zenity --entry \
+      --title="Pasta do jogo" \
+      --text="Confirme ou edite o caminho do Project Gorgon:" \
+      --entry-text="$game_dir" 2>/dev/null)" || exit 0
+  fi
+
+  [[ -d "$game_dir" ]] || die_gui "Pasta não encontrada:\n$game_dir"
+
+  local action
+  action="$(zenity --list --title="Project Gorgon PT-BR" \
+    --text="Pasta: $game_dir" \
+    --column="Ação" --column="Descrição" \
+    "install" "Instalar / atualizar tradução" \
+    "verify" "Verificar instalação existente" \
+    2>/dev/null)" || exit 0
+
+  case "$action" in
+    install)
+      run_install "$game_dir"
+      ;;
+    verify)
+      run_verify "$game_dir"
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+}
+
+main "$@"

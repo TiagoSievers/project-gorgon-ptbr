@@ -1,0 +1,1 @@
+"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>(.+)( x[\\d]+)? added to inventory.</i></color>$": "<color=#FFBA7C><i>[Статус]</i></color> <color=#FFBA7C><i>$1$2 добавлено в инвентарь.</i></color>"

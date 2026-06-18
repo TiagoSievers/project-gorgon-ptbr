@@ -1,0 +1,79 @@
+╔══════════════════════════════════════════════════════════════╗
+║     PROJECT GORGON — PORTUGUÊS (BR) — COMO INSTALAR          ║
+╚══════════════════════════════════════════════════════════════╝
+
+Requisitos:
+  • Project Gorgon na Steam (versão paga ou demo)
+  • Linux com Proton (Steam Play)
+  • Comando: sudo apt install zenity   (só uma vez, se o instalador pedir)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1 — Extrair
+  Abra o arquivo .zip (WinRAR, 7-Zip, etc.)
+  Deve aparecer a pasta:  pg-ptbr
+
+PASSO 2 — Instalar
+  Entre na pasta pg-ptbr
+  Dois cliques em:  INSTALAR
+
+  Na primeira vez no Linux:
+    botão direito → Propriedades → marque "Permitir executar como programa"
+
+  Clique Sim → confirme a pasta do jogo → aguarde terminar.
+
+  Ao terminar, o instalador mostra um relatório com os caminhos
+  instalados no seu computador.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ONDE CADA COISA VAI (exemplo típico no Linux)
+
+  Jogo (Steam):
+    ~/.steam/.../steamapps/common/Project Gorgon/
+
+  BepInEx:
+    .../Project Gorgon/BepInEx/
+    .../Project Gorgon/winhttp.dll
+
+  Plugin PgTranslateLive:
+    .../Project Gorgon/BepInEx/plugins/PgTranslateLive/PgTranslateLive.dll
+
+  Config do plugin:
+    .../Project Gorgon/BepInEx/config/com.pg.translatelive.cfg
+
+  Language pack PT-BR (Proton — versão paga, app 342940):
+    ~/.steam/.../compatdata/342940/pfx/.../LocalLow/Elder Game/
+      Project Gorgon/Translation/
+
+  Language pack PT-BR (Proton — demo, app 969170):
+    ~/.steam/.../compatdata/969170/pfx/.../LocalLow/Elder Game/
+      Project Gorgon/Translation/
+
+  O instalador copia para os dois prefixos (pago e demo).
+
+  Language pack PT-BR (Linux):
+    ~/.config/unity3d/Elder Game/Project Gorgon/Translation/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 3 — Steam (obrigatório, só uma vez)
+  Steam → Project Gorgon → Propriedades → Geral → Launch Options
+  Cole exatamente:
+
+    WINEDLLOVERRIDES="winhttp.dll=n,b" %command%
+
+  Propriedades → Compatibilidade → Forçar Proton 9
+
+PASSO 4 — Jogar
+  Abra o jogo pela Steam.
+  Se perguntar, aceite o language pack PT-BR.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problemas?
+  • Só funciona no Linux com Proton (não é para Windows nativo).
+  • Não apague pastas dentro de pg-ptbr antes de instalar.
+  • Instale a partir da pasta pg-ptbr inteira, não só um arquivo.
+
+Fan project — não oficial. Elder Game, LLC.

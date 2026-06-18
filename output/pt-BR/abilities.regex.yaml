@@ -1,0 +1,4 @@
+# Project Gorgon — abilities (regex) (pt-BR)
+# Gerado de templates/translator-ru + cache/translations.json
+
+"^You just learned the ability (.+)!$": "Você acabou de aprender a habilidade $1!"

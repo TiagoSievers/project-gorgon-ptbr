@@ -1,0 +1,55 @@
+╔══════════════════════════════════════════════════════════════╗
+║  PROJECT GORGON — PORTUGUÊS (BR) — WINDOWS — COMO INSTALAR    ║
+╚══════════════════════════════════════════════════════════════╝
+
+Requisitos:
+  • Windows 10 ou 11
+  • Project Gorgon na Steam (versão paga ou demo)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1 — Extrair
+  Extraia o arquivo .zip (7-Zip, WinRAR, etc.)
+  Deve aparecer a pasta:  pg-ptbr-windows
+
+PASSO 2 — Instalar
+  Entre na pasta pg-ptbr
+  Dois cliques em:  INSTALAR.exe
+
+  (Se não houver .exe, use INSTALAR.bat)
+
+  Clique Instalar → confirme a pasta do jogo → aguarde terminar.
+
+  Ao terminar, o instalador mostra os caminhos instalados.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ONDE CADA COISA VAI (exemplo típico)
+
+  Jogo (Steam):
+    C:\Program Files (x86)\Steam\steamapps\common\Project Gorgon\
+
+  Plugin + BepInEx:
+    ...\Project Gorgon\BepInEx\
+    ...\Project Gorgon\BepInEx\plugins\PgTranslateLive\PgTranslateLive.dll
+
+  Language pack PT-BR (CDN):
+    %USERPROFILE%\AppData\LocalLow\Elder Game\Project Gorgon\Translation\
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 3 — Jogar
+  Abra o Project Gorgon pela Steam.
+  Se perguntar, aceite o language pack PT-BR.
+
+  No Windows NÃO é necessário configurar Launch Options do Proton
+  (isso é só para Linux).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problemas?
+  • Extraia a pasta pg-ptbr inteira antes de instalar.
+  • A pasta do jogo deve ser ...\steamapps\common\Project Gorgon
+  • Antivírus pode bloquear winhttp.dll do BepInEx — adicione exceção.
+
+Fan project — não oficial. Elder Game, LLC.

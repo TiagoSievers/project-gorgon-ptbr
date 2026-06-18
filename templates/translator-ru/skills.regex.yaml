@@ -1,0 +1,6 @@
+"^You leveled up to ([\\d]+) in (.+)!$": "Вы достигли уровня $1 в навыке $2!" 
+"^([+-][\\d]+) to (.+)$": "$1 к $2"
+"^([+-][\\d]+) XP in (.+)$": "$1 к опыту навыка $2"
+"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>You earned ([\\d]+) XP in (.+).</i></color>$": "<color=#FFBA7C><i>[Статус]</i></color> <color=#FFBA7C><i>Вы получили $1 к опыту навыка $2.</i></color>"
+"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>You earned ([\\d]+) XP and reached level ([\\d]+) in (.+).</i></color>$": "<color=#FFBA7C><i>[Статус]</i></color> <color=#FFBA7C><i>Вы получили $1 к опыту навыка $3 и достигли уровня $2.</i></color>"
+"^Ability: (.+)$": "Способность: $1"

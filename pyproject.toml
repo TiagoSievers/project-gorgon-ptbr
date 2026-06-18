@@ -1,0 +1,8 @@
+[project]
+name = "project-gorgon-translations"
+version = "0.2.0"
+description = "Pipeline PT-BR Project Gorgon — CDN + language pack"
+requires-python = ">=3.10"
+
+[project.scripts]
+pg-translate = "src.__main__:main"

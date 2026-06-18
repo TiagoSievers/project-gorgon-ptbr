@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Fonte dev — mesmo conteúdo que installer/INSTALAR (pacote Release)
+exec "$(cd "$(dirname "$0")" && pwd)/INSTALAR" "$@"

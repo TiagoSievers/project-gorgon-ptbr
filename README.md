@@ -1,0 +1,166 @@
+# Project Gorgon — PT-BR
+
+Tradução em português brasileiro para [Project Gorgon](https://store.steampowered.com/app/342940/Project_Gorgon/) (versão paga ou demo na Steam): **language pack** (UI, itens, quests) + plugin **PgTranslateLive** (diálogo **Falar** com NPC via Google).
+
+Projeto fan — não oficial. Requer o jogo na Steam (pago ou demo).
+
+---
+
+## Jogar (fácil)
+
+1. Baixe a **[última Release](https://github.com/TiagoSievers/project-gorgon-ptbr/releases)** (`.zip` ou `.tar.gz`)
+2. Extraia — aparece a pasta **`pg-ptbr/`**
+3. **Dois cliques** em **`INSTALAR`** (leia `COMO-INSTALAR.txt` se precisar)
+
+   No Ubuntu/Nautilus, na 1ª vez: botão direito → Propriedades → marque **Permitir executar como programa**.
+
+   Requer `zenity` (Ubuntu: `sudo apt install zenity`).
+
+   Alternativa no terminal: `./install.sh`
+
+4. Abra o jogo na Steam e configure **Launch Options** (o instalador mostra o texto ao final).
+
+**Mínimo (Proton + BepInEx):**
+
+```
+WINEDLLOVERRIDES="winhttp.dll=n,b" %command%
+```
+
+**Linux — laptop NVIDIA híbrido (ex.: Avell):**
+
+```
+env __NV_PRIME_RENDER_OFFLOAD=1 DXVK_FILTER_DEVICE_NAME="RTX 3050" WINEDLLOVERRIDES="winhttp.dll=n,b" %command%
+```
+
+Também: Propriedades → Compatibilidade → **Forçar Steam Play** → Proton 9.
+
+**O instalador faz tudo:** BepInEx (já vem no pacote Release), plugin, language pack PT em `Translation/`. O jogador **não** precisa instalar Python nem .NET. Internet só para **Falar** com NPC (Google).
+
+### Windows
+
+1. Baixe o release **`*-windows.zip`**
+2. Extraia a pasta **`pg-ptbr-windows/`**
+3. Dois cliques em **`INSTALAR.exe`**
+
+   Não precisa de Launch Options do Proton (só Linux).
+
+**Mantenedor — gerar o .exe (no Windows):**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-windows-installer.ps1
+make pack-windows
+make release-pack-windows
+```
+
+---
+
+## Desenvolver / clonar
+
+```bash
+git clone https://github.com/TiagoSievers/project-gorgon-ptbr.git
+cd project-gorgon-ptbr
+make install
+# ou: ./install.sh
+```
+
+O repositório inclui `output/Translation/` (PT pronto) e `dist/PgTranslateLive.dll` (plugin pré-compilado).
+
+---
+
+## Atualizar tradução (mantenedor)
+
+Quando o CDN do jogo mudar (nova versão):
+
+```bash
+make pipeline          # fetch → extract → translate (Google) → write
+make sync-dist         # recompila e copia DLL → dist/
+make pack              # monta pack/pg-ptbr/ (pasta completa para testar)
+make release-pack      # pack/ → releases/*.zip + *.tar.gz (envie o .zip)
+```
+
+Edite `glossary.json` para termos fixos. Detalhes do pipeline: `make help`.
+
+---
+
+## O que o plugin faz
+
+| Recurso | Como |
+|---------|------|
+| Menu, itens, quests, UI | `output/Translation/` — language pack do jogo |
+| Diálogo **Falar** (NPC) | Plugin + Google Translate ao vivo |
+| Log do plugin | `Project Gorgon/BepInEx/LogOutput.log` |
+| Config | `BepInEx/config/com.pg.translatelive.cfg` |
+
+Fluxo interno do plugin: [`bepinex-plugin/PgTranslateLive/FLOW.md`](bepinex-plugin/PgTranslateLive/FLOW.md)
+
+---
+
+## Pacote de instalação (`pack/pg-ptbr/`)
+
+Tudo que o jogador precisa fica **numa pasta só**:
+
+```
+pack/pg-ptbr/
+├── INSTALAR               # único instalador (dois cliques)
+├── COMO-INSTALAR.txt
+├── dist/                  # interno
+├── output/                # interno
+├── vendor/                # interno
+└── scripts/               # interno
+├── install.sh
+├── dist/                  # plugin
+├── output/Translation/    # language pack PT
+├── vendor/                # BepInEx (offline)
+├── scripts/
+└── README-JOGADOR.txt
+```
+
+**Não** copie só `installer/` — use `pack/pg-ptbr/` inteira ou o `.tar.gz` da Release.
+
+## Estrutura do repositório (desenvolvimento)
+
+```
+├── pack/pg-ptbr/           # gerado: make pack (pacote completo — distribuir/testar)
+├── installer/
+│   └── PgPtBr-Installer      # fonte do instalador gráfico (copiado → pack/)
+├── scripts/
+│   ├── install.sh          # instalador completo
+│   ├── install-paths.sh    # detecção Steam / jogo
+│   ├── verify-install.sh   # checagem pós-instalação
+│   ├── build-installer.sh  # gera dist/PgPtBr-Installer
+│   └── release-pack.sh     # monta tarball da Release
+├── dist/
+│   ├── PgTranslateLive.dll
+│   ├── com.pg.translatelive.cfg
+│   └── PgPtBr-Installer      # na Release: dois cliques
+├── vendor/
+│   └── BepInExPack_IL2CPP.zip  # BepInEx incluso na Release (make fetch-bepinex-vendor)
+├── output/
+│   ├── Translation/        # language pack PT (versionado)
+│   └── pt-BR/              # YAML mod Translator (opcional)
+├── bepinex-plugin/         # código-fonte do plugin
+├── src/                    # pipeline Python (mantenedor)
+├── cache/                  # gitignored — pipeline
+└── releases/               # gitignored — tarballs gerados
+```
+
+---
+
+## Comandos úteis
+
+```bash
+make install          # instalar no jogo
+make verify-install   # checar BepInEx + plugin + pack
+make release-pack     # pacote para GitHub Release
+make pipeline         # regerar tradução (mantenedor)
+make paths            # caminhos Steam detectados
+./scripts/diagnose-gamescope.sh   # diagnóstico vídeo Linux
+```
+
+---
+
+## Créditos e aviso
+
+- Dados do jogo: copyright **Elder Game, LLC**
+- Tradução automática (Google) — revisão humana recomendada
+- BepInEx: [Thunderstore](https://thunderstore.io/c/project-gorgon/p/BepInEx/BepInExPack_IL2CPP/)

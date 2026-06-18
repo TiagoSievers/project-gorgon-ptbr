@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+# Único instalador do pacote pg-ptbr — dois cliques.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || echo "${BASH_SOURCE[0]}")")" && pwd)"
+cd "$ROOT"
+
+SCRIPT_DIR="$ROOT/scripts"
+INSTALL_SH="$SCRIPT_DIR/install.sh"
+PATHS_SH="$SCRIPT_DIR/install-paths.sh"
+
+die_gui() {
+  zenity --error --width=440 --title="Project Gorgon PT-BR" --text="$1" 2>/dev/null || {
+    echo "Erro: $1" >&2
+    read -r -p "Enter para sair…"
+  }
+  exit 1
+}
+
+need_zenity() {
+  command -v zenity >/dev/null 2>&1 || die_gui "Instale zenity:\n  sudo apt install zenity"
+}
+
+check_pack() {
+  local missing=""
+  [[ -f "$INSTALL_SH" ]]          || missing+="scripts/install.sh\n"
+  [[ -f "$ROOT/dist/PgTranslateLive.dll" ]] || missing+="dist/PgTranslateLive.dll\n"
+  [[ -d "$ROOT/output/Translation" ]]     || missing+="output/Translation/\n"
+  [[ -f "$ROOT/vendor/BepInExPack_IL2CPP.zip" ]] || missing+="vendor/BepInExPack_IL2CPP.zip\n"
+  [[ -z "$missing" ]] || die_gui "Pacote incompleto.\n\nExtraia o .zip inteiro e use a pasta pg-ptbr.\n\nFalta:\n$missing"
+}
+
+detect_game() {
+  [[ -f "$PATHS_SH" ]] || return 0
+  # shellcheck disable=SC1090
+  bash -c "source \"$PATHS_SH\" && printf '%s' \"\${GAME_DIR:-}\""
+}
+
+pick_game_dir() {
+  zenity --file-selection --directory \
+    --title="Selecione a pasta Project Gorgon (Steam)" \
+    ${1:+--filename="$1/"} 2>/dev/null
+}
+
+_tilde_path() {
+  local p="$1"
+  if [[ "$p" == "$HOME/"* ]]; then
+    printf '~/%s' "${p#"$HOME/"}"
+  else
+    printf '%s' "$p"
+  fi
+}
+
+build_success_message() {
+  local game_dir="$1"
+  local plugin_dir cdn_paid cdn_demo cdn_linux
+  {
+    read -r plugin_dir
+    read -r cdn_paid
+    read -r cdn_demo
+    read -r cdn_linux
+  } < <(
+    GAME_DIR="$game_dir" bash -c "
+      source \"$PATHS_SH\"
+      printf '%s\n' \"\$GAME_DIR/BepInEx\"
+      printf '%s\n' \"\$(_proton_prefix_for_app 342940)/Translation/\"
+      printf '%s\n' \"\$(_proton_prefix_for_app 969170)/Translation/\"
+      printf '%s\n' \"\$UNITY_LINUX/Translation/\"
+    "
+  )
+
+  cat <<EOF
+Instalação concluída!
+
+Diretório do plugin:
+$(_tilde_path "$plugin_dir")
+
+Diretório CDN Tradução — versão paga (342940):
+$(_tilde_path "$cdn_paid")
+
+Diretório CDN Tradução — versão demo (969170):
+$(_tilde_path "$cdn_demo")
+
+Caso utilize Linux (espelho nativo):
+$(_tilde_path "$cdn_linux")
+
+Passos na Steam:
+1. Launch Options:
+   WINEDLLOVERRIDES="winhttp.dll=n,b" %command%
+2. Compatibilidade → Proton 9
+3. Abrir o jogo
+
+Importante: no Proton, fullscreen (tela cheia) pode não funcionar bem — use janela ou borderless se tiver problema.
+
+Clique OK para ver o relatório técnico completo.
+EOF
+}
+
+run_install() {
+  local game_dir="$1"
+  local log progress_fifo
+  log="$(mktemp /tmp/pg-ptbr-install.XXXXXX.log)"
+  progress_fifo="$(mktemp -u /tmp/pg-ptbr-progress.XXXXXX)"
+  mkfifo "$progress_fifo"
+
+  zenity --progress --percentage=0 --auto-close --no-cancel \
+    --title="Instalando PT-BR…" --width=480 \
+    < "$progress_fifo" 2>/dev/null &
+  local zpid=$!
+  sleep 0.15
+
+  (
+    export GAME_DIR="$game_dir" ROOT PG_PROGRESS_FD=3
+    exec 3>"$progress_fifo"
+    trap 'exec 3>&-' EXIT
+    bash "$INSTALL_SH"
+  ) >"$log" 2>&1 &
+  local pid=$!
+
+  local st=0
+  wait "$pid" || st=$?
+  wait "$zpid" 2>/dev/null || true
+  rm -f "$progress_fifo"
+
+  if [[ "$st" -eq 0 ]]; then
+    local success_msg
+    success_msg="$(build_success_message "$game_dir")"
+    zenity --info --width=680 --title="Pronto! Pode abrir o jogo" \
+      --text="$success_msg"
+    zenity --text-info --title="Relatório técnico" --filename="$log" --width=720 --height=480
+    rm -f "$log"
+    return 0
+  fi
+
+  zenity --text-info --title="Falha na instalação" --filename="$log" --width=720 --height=480
+  rm -f "$log"
+  return 1
+}
+
+main() {
+  need_zenity
+  check_pack
+
+  local detected game_dir
+  detected="$(detect_game)"
+
+  zenity --question --width=480 --title="Project Gorgon PT-BR" \
+    --text="Instalar tradução PT-BR?\n\n• BepInEx + plugin + language pack\n• Tudo já está neste pacote (sem download)\n• Requer Project Gorgon na Steam\n\nContinuar?" \
+    || exit 0
+
+  if [[ -n "$detected" ]]; then
+    game_dir="$(zenity --entry \
+      --title="Pasta do jogo" \
+      --text="Confirme o caminho do Project Gorgon:" \
+      --entry-text="$detected" 2>/dev/null)" || exit 0
+  else
+    game_dir="$(pick_game_dir "$HOME")" || exit 0
+  fi
+
+  [[ -d "$game_dir" ]] || die_gui "Pasta não encontrada:\n$game_dir"
+
+  run_install "$game_dir"
+}
+
+main "$@"
