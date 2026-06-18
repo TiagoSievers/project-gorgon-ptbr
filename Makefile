@@ -51,10 +51,10 @@ help: ## Mostra esta ajuda
 	@echo "  make pack               Monta pack/pg-ptbr/ (TUDO numa pasta — testar/copiar)"
 	@echo "  cd pack/pg-ptbr && ./Instalar-PTBR   Instalar (dois cliques)"
 	@echo "  ./install.sh            Terminal (na raiz do repo dev)"
-	@echo "  make release-pack       pack/ → releases/pg-ptbr-*-linux.zip"
+	@echo "  make release-pack       → releases/Project-Gorgon-PT-BR-v*-Linux.zip"
 	@echo "  make pack-windows       Monta pack/pg-ptbr-windows/"
 	@echo "  make build-windows-exe  Gera INSTALAR.exe (rodar no Windows)"
-	@echo "  make release-pack-windows  zip Windows para jogadores"
+	@echo "  make release-pack-windows  → releases/Project-Gorgon-PT-BR-v*-Windows.zip"
 	@echo ""
 	@echo "Plugin (dev):"
 	@echo "  make sync-dist          Copia DLL compilada → dist/"
@@ -143,7 +143,7 @@ sync-dist: ## Copia PgTranslateLive.dll (bin/Release) → dist/
 	cp "$(PLUGIN_DLL)" "$(DIST_DLL)"
 	@echo "dist: $(DIST_DLL)"
 
-release-pack: pack ## Compacta pack/pg-ptbr/ → releases/*.tar.gz
+release-pack: pack ## Compacta pack → releases/Project-Gorgon-PT-BR-v*-Linux.zip
 	@chmod +x "$(ROOT)/scripts/release-pack.sh"
 	"$(ROOT)/scripts/release-pack.sh"
 
@@ -160,7 +160,7 @@ build-windows-exe: ## Gera dist/INSTALAR.exe (PowerShell + PyInstaller no Window
 	@chmod +x "$(ROOT)/scripts/build-windows-installer.sh"
 	"$(ROOT)/scripts/build-windows-installer.sh"
 
-release-pack-windows: pack-windows ## Compacta pack Windows → releases/*-windows.zip
+release-pack-windows: pack-windows ## Compacta pack → releases/Project-Gorgon-PT-BR-v*-Windows.zip
 	@chmod +x "$(ROOT)/scripts/release-pack-windows.sh"
 	"$(ROOT)/scripts/release-pack-windows.sh"
 

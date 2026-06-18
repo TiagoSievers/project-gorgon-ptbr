@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Compacta pack/pg-ptbr/ → releases/*.tar.gz e *.zip (WinRAR / 7-Zip)
+# Compacta pack/pg-ptbr/ → releases/Project-Gorgon-PT-BR-v*-Linux.zip
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -17,26 +17,20 @@ die() { echo "Erro: $*" >&2; exit 1; }
 [[ -f "$VERSION_FILE" ]] || die "version.json ausente"
 
 PACK_VERSION="$(python3 -c "import json; print(json.load(open('$VERSION_FILE'))['Version'])")"
-CDN_VERSION="$(python3 -c "import json; print(json.load(open('$VERSION_FILE'))['CdnFileVersion'])")"
-STAMP="$(date -u +%Y%m%d)"
-BASE="pg-ptbr-${PACK_VERSION}-cdn${CDN_VERSION}-${STAMP}-linux"
-TAR_OUT="$RELEASES_DIR/${BASE}.tar.gz"
-ZIP_OUT="$RELEASES_DIR/${BASE}.zip"
+ZIP_NAME="Project-Gorgon-PT-BR-v${PACK_VERSION}-Linux.zip"
+ZIP_OUT="$RELEASES_DIR/${ZIP_NAME}"
 
 mkdir -p "$RELEASES_DIR"
 PACK_PARENT="$(dirname "$PACK_DIR")"
 PACK_NAME="$(basename "$PACK_DIR")"
-
-tar -czf "$TAR_OUT" -C "$PACK_PARENT" "$PACK_NAME"
 
 command -v zip >/dev/null 2>&1 || die "zip não encontrado (sudo apt install zip)"
 rm -f "$ZIP_OUT"
 (cd "$PACK_PARENT" && zip -qr "$ZIP_OUT" "$PACK_NAME")
 
 echo ""
-echo "Envie para seu amigo (WinRAR / 7-Zip):"
-echo "  ZIP: $ZIP_OUT"
-echo "  TAR: $TAR_OUT"
-du -sh "$ZIP_OUT" "$TAR_OUT"
+echo "Release Linux (GitHub → Releases → anexar este arquivo):"
+echo "  $ZIP_OUT"
+du -sh "$ZIP_OUT"
 echo ""
-echo "Amigo: extrair → pasta pg-ptbr → dois cliques em INSTALAR → ler COMO-INSTALAR.txt"
+echo "Jogador: extrair → pasta pg-ptbr → dois cliques em INSTALAR"

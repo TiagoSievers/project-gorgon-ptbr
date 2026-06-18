@@ -35,8 +35,9 @@ else
   cp "$ROOT/installer/pg_ptbr_installer_windows.py" \
      "$ROOT/installer/windows_core.py" \
      "$PACK_DIR/installer/"
-  echo "Aviso: INSTALAR.exe ausente — use INSTALAR.bat (requer Python) ou rode no Windows:"
-  echo "  powershell -ExecutionPolicy Bypass -File scripts/build-windows-installer.ps1"
+  echo "Aviso: INSTALAR.exe ausente — pacote dev only (INSTALAR.bat requer Python)."
+  echo "  Release: powershell -File scripts/build-windows-installer.ps1"
+  echo "  ou GitHub Actions → workflow Release"
 fi
 
 PACK_VERSION="$(python3 -c "import json; print(json.load(open('$PACK_DIR/output/Translation/version.json'))['Version'])")"

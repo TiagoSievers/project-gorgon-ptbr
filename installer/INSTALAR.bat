@@ -20,6 +20,7 @@ if %errorlevel%==0 (
 )
 
 echo Erro: INSTALAR.exe nao encontrado e Python nao esta instalado.
-echo Extraia o pacote completo ou use INSTALAR.exe
+echo Extraia o pacote completo ou baixe a Release com INSTALAR.exe
+msg "%~n0" "INSTALAR.exe nao encontrado. Instale Python ou use o zip da Release com .exe incluido."
 pause
 exit /b 1

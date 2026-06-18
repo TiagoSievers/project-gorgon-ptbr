@@ -6,9 +6,26 @@ Projeto fan — não oficial. Requer o jogo na Steam (pago ou demo).
 
 ---
 
-## Jogar (fácil)
+## Baixar (GitHub Release)
 
-1. Baixe a **[última Release](https://github.com/TiagoSievers/project-gorgon-ptbr/releases)** (`.zip` ou `.tar.gz`)
+1. Abra **[Releases](https://github.com/TiagoSievers/project-gorgon-ptbr/releases)** no GitHub  
+2. Clique na release mais recente (ex.: **v0.2.0**)  
+3. Role até **Assets**  
+4. Baixe **só o arquivo do seu sistema** (ignore *Source code* — é código-fonte automático do GitHub):
+
+| Se você joga em… | Arquivo para clicar |
+|------------------|---------------------|
+| **Linux / Steam Deck / Proton** | `Project-Gorgon-PT-BR-v…-**Linux**.zip` |
+| **Windows** | `Project-Gorgon-PT-BR-v…-**Windows**.zip` |
+
+Link direto da última release:  
+**https://github.com/TiagoSievers/project-gorgon-ptbr/releases/latest**
+
+---
+
+## Jogar — Linux (Steam + Proton)
+
+1. Baixe **`Project-Gorgon-PT-BR-v…-Linux.zip`** (tabela acima)
 2. Extraia — aparece a pasta **`pg-ptbr/`**
 3. **Dois cliques** em **`INSTALAR`** (leia `COMO-INSTALAR.txt` se precisar)
 
@@ -36,20 +53,34 @@ Também: Propriedades → Compatibilidade → **Forçar Steam Play** → Proton 
 
 **O instalador faz tudo:** BepInEx (já vem no pacote Release), plugin, language pack PT em `Translation/`. O jogador **não** precisa instalar Python nem .NET. Internet só para **Falar** com NPC (Google).
 
-### Windows
+---
 
-1. Baixe o release **`*-windows.zip`**
+## Jogar — Windows
+
+1. Baixe **`Project-Gorgon-PT-BR-v…-Windows.zip`** (tabela em [Baixar](#baixar-github-release))
 2. Extraia a pasta **`pg-ptbr-windows/`**
-3. Dois cliques em **`INSTALAR.exe`**
+3. **Dois cliques em `INSTALAR.exe`** — não precisa instalar Python
 
-   Não precisa de Launch Options do Proton (só Linux).
+   (`INSTALAR.bat` só é fallback de desenvolvimento se o `.exe` não existir.)
 
-**Mantenedor — gerar o .exe (no Windows):**
+Não precisa de Launch Options do Proton (só Linux).
+
+**Mantenedor — gerar zips para Release (com INSTALAR.exe no Windows):**
+
+Dispare no GitHub: **Actions → Release → Run workflow**  
+Ou crie tag `v0.2.0` — publica Linux + Windows automaticamente.
+
+Local (Windows VM, com PowerShell):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/build-windows-installer.ps1
-make pack-windows
-make release-pack-windows
+```
+
+Depois no Linux (ou Git Bash):
+
+```bash
+make release-pack-windows   # exige dist/INSTALAR.exe
+make release-pack           # Linux
 ```
 
 ---
@@ -75,7 +106,8 @@ Quando o CDN do jogo mudar (nova versão):
 make pipeline          # fetch → extract → translate (Google) → write
 make sync-dist         # recompila e copia DLL → dist/
 make pack              # monta pack/pg-ptbr/ (pasta completa para testar)
-make release-pack      # pack/ → releases/*.zip + *.tar.gz (envie o .zip)
+make release-pack      # → Project-Gorgon-PT-BR-v*-Linux.zip
+make release-pack-windows  # → Project-Gorgon-PT-BR-v*-Windows.zip
 ```
 
 Edite `glossary.json` para termos fixos. Detalhes do pipeline: `make help`.
@@ -115,7 +147,7 @@ pack/pg-ptbr/
 └── README-JOGADOR.txt
 ```
 
-**Não** copie só `installer/` — use `pack/pg-ptbr/` inteira ou o `.tar.gz` da Release.
+**Não** copie só `installer/` — use `pack/pg-ptbr/` inteira ou o `.zip` **Linux** da Release.
 
 ## Estrutura do repositório (desenvolvimento)
 

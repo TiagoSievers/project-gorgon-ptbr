@@ -2,6 +2,11 @@
 ║     PROJECT GORGON — PORTUGUÊS (BR) — COMO INSTALAR          ║
 ╚══════════════════════════════════════════════════════════════╝
 
+BAIXAR
+  GitHub → Releases → Assets → clique em:
+    Project-Gorgon-PT-BR-v…-Linux.zip
+  https://github.com/TiagoSievers/project-gorgon-ptbr/releases/latest
+
 Requisitos:
   • Project Gorgon na Steam (versão paga ou demo)
   • Linux com Proton (Steam Play)

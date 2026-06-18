@@ -14,13 +14,15 @@ die() { echo "Erro: $*" >&2; exit 1; }
   "$ROOT/scripts/assemble-pack-windows.sh"
 }
 
+[[ -f "$PACK_DIR/INSTALAR.exe" ]] || die \
+  "INSTALAR.exe ausente em $PACK_DIR — gere no Windows: powershell -File scripts/build-windows-installer.ps1
+   ou dispare GitHub Actions: .github/workflows/release.yml (workflow_dispatch)"
+
 [[ -f "$VERSION_FILE" ]] || die "version.json ausente"
 
 PACK_VERSION="$(python3 -c "import json; print(json.load(open('$VERSION_FILE'))['Version'])")"
-CDN_VERSION="$(python3 -c "import json; print(json.load(open('$VERSION_FILE'))['CdnFileVersion'])")"
-STAMP="$(date -u +%Y%m%d)"
-BASE="pg-ptbr-${PACK_VERSION}-cdn${CDN_VERSION}-${STAMP}-windows"
-ZIP_OUT="$RELEASES_DIR/${BASE}.zip"
+ZIP_NAME="Project-Gorgon-PT-BR-v${PACK_VERSION}-Windows.zip"
+ZIP_OUT="$RELEASES_DIR/${ZIP_NAME}"
 
 mkdir -p "$RELEASES_DIR"
 PACK_PARENT="$(dirname "$PACK_DIR")"
@@ -31,8 +33,8 @@ rm -f "$ZIP_OUT"
 (cd "$PACK_PARENT" && zip -qr "$ZIP_OUT" "$PACK_NAME")
 
 echo ""
-echo "Release Windows:"
-echo "  ZIP: $ZIP_OUT"
+echo "Release Windows (GitHub → Releases → anexar este arquivo):"
+echo "  $ZIP_OUT"
 du -sh "$ZIP_OUT"
 echo ""
-echo "Jogador: extrair → pg-ptbr-windows → dois cliques em INSTALAR.exe"
+echo "Jogador: extrair → pasta pg-ptbr-windows → dois cliques em INSTALAR.exe"

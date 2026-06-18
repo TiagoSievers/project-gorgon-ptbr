@@ -2,6 +2,11 @@
 ║  PROJECT GORGON — PORTUGUÊS (BR) — WINDOWS — COMO INSTALAR    ║
 ╚══════════════════════════════════════════════════════════════╝
 
+BAIXAR
+  GitHub → Releases → Assets → clique em:
+    Project-Gorgon-PT-BR-v…-Windows.zip
+  https://github.com/TiagoSievers/project-gorgon-ptbr/releases/latest
+
 Requisitos:
   • Windows 10 ou 11
   • Project Gorgon na Steam (versão paga ou demo)
@@ -13,10 +18,10 @@ PASSO 1 — Extrair
   Deve aparecer a pasta:  pg-ptbr-windows
 
 PASSO 2 — Instalar
-  Entre na pasta pg-ptbr
+  Entre na pasta pg-ptbr-windows
   Dois cliques em:  INSTALAR.exe
 
-  (Se não houver .exe, use INSTALAR.bat)
+  (INSTALAR.bat só se o .exe não existir — requer Python.)
 
   Clique Instalar → confirme a pasta do jogo → aguarde terminar.
 
