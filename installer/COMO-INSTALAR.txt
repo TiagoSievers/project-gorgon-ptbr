@@ -20,7 +20,7 @@ PASSO 1 — Extrair
 
 PASSO 2 — Instalar
   Entre na pasta pg-ptbr
-  Dois cliques em:  INSTALAR
+  Botão direito em:  INSTALAR  →  Executar
 
   Na primeira vez no Linux:
     botão direito → Propriedades → marque "Permitir executar como programa"
@@ -29,6 +29,16 @@ PASSO 2 — Instalar
 
   Ao terminar, o instalador mostra um relatório com os caminhos
   instalados no seu computador.
+
+DESINSTALAR (depois de instalar)
+  Na pasta do jogo:
+    .../Project Gorgon/uninstall-language-pack-ptbr
+
+  Botão direito → Executar → confirme.
+
+  Remove em todos os caminhos instalados:
+    • BepInEx/, dotnet/, winhttp.dll, doorstop_config.ini
+    • Plugins e language pack PT-BR (Proton + Linux)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -46,6 +56,9 @@ ONDE CADA COISA VAI (exemplo típico no Linux)
 
   Config do plugin:
     .../Project Gorgon/BepInEx/config/com.pg.translatelive.cfg
+
+  Desinstalador (copiado na instalação):
+    .../Project Gorgon/uninstall-language-pack-ptbr
 
   Language pack PT-BR (Proton — versão paga, app 342940):
     ~/.steam/.../compatdata/342940/pfx/.../LocalLow/Elder Game/

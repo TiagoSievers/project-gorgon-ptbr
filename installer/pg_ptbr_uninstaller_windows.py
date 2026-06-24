@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Instalador gráfico Windows — Project Gorgon PT-BR (PyInstaller → INSTALAR.exe)."""
+"""Desinstalador gráfico Windows — Project Gorgon PT-BR."""
 from __future__ import annotations
 
 import sys
 import threading
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, messagebox, scrolledtext, ttk
+from tkinter import messagebox, scrolledtext, ttk
 
 from windows_core import (
-    build_success_message,
+    UNINSTALLER_WIN_EXE,
+    build_uninstall_message,
     detect_game_dir,
-    install_all,
-    validate_pack,
+    schedule_self_delete,
+    uninstall_all,
 )
 
 
@@ -23,30 +24,24 @@ def _set_app_id() -> None:
         import ctypes
 
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-            "ProjectGorgon.PtBr.Installer"
+            "ProjectGorgon.PtBr.Uninstaller"
         )
     except OSError:
         pass
 
 
-def pack_root() -> Path:
+def game_dir_from_install_location() -> Path | None:
     if getattr(sys, "frozen", False):
-        return Path(sys.executable).resolve().parent
-    here = Path(__file__).resolve().parent
-    if (here.parent / "dist" / "PgTranslateLive.dll").is_file():
-        return here.parent
-    if (here / "dist" / "PgTranslateLive.dll").is_file():
-        return here
-    return here.parent
+        game = Path(sys.executable).resolve().parent
+        if game.is_dir():
+            return game
+    return detect_game_dir()
 
 
-ROOT = pack_root()
-
-
-class InstallerApp(tk.Tk):
+class UninstallerApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self.title("Project Gorgon — PT-BR (Windows) — Instalar")
+        self.title("Project Gorgon — PT-BR (Windows) — Desinstalar")
         self.minsize(560, 480)
         self.geometry("700x520")
 
@@ -61,13 +56,16 @@ class InstallerApp(tk.Tk):
 
         ttk.Label(
             self,
-            text="Instalador — tradução PT-BR + BepInEx + plugin",
+            text="Desinstalador — remover tradução PT-BR + BepInEx + plugins",
             font=("Segoe UI", 11, "bold"),
         ).pack(anchor="w", **pad)
 
         ttk.Label(
             self,
-            text="Requisitos: Project Gorgon na Steam (Windows). Tudo já vem neste pacote.",
+            text=(
+                "Remove BepInEx, plugins PgTranslateLive/Translator, winhttp.dll "
+                "e o language pack PT-BR. O jogo volta ao inglês original."
+            ),
             wraplength=660,
         ).pack(anchor="w", padx=10)
 
@@ -79,19 +77,18 @@ class InstallerApp(tk.Tk):
         row.pack(fill="x", pady=4)
 
         self.game_dir_var = tk.StringVar()
-        ttk.Entry(row, textvariable=self.game_dir_var).pack(
+        ttk.Entry(row, textvariable=self.game_dir_var, state="readonly").pack(
             side="left", fill="x", expand=True, padx=(0, 6)
         )
-        ttk.Button(row, text="Procurar…", command=self._browse).pack(side="left")
-        ttk.Button(row, text="Detectar", command=self._prefill_game_dir).pack(
-            side="left", padx=(6, 0)
-        )
+        ttk.Button(row, text="Detectar", command=self._prefill_game_dir).pack(side="left")
 
         btn_row = ttk.Frame(self)
         btn_row.pack(fill="x", **pad)
 
-        self.install_btn = ttk.Button(btn_row, text="Instalar", command=self._run_install)
-        self.install_btn.pack(side="left")
+        self.uninstall_btn = ttk.Button(
+            btn_row, text="Desinstalar", command=self._run_uninstall
+        )
+        self.uninstall_btn.pack(side="left")
         ttk.Button(btn_row, text="Sair", command=self.destroy).pack(side="right")
 
         self.status_var = tk.StringVar(value="Aguardando…")
@@ -105,18 +102,9 @@ class InstallerApp(tk.Tk):
         self.log.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
     def _prefill_game_dir(self) -> None:
-        detected = detect_game_dir()
+        detected = game_dir_from_install_location()
         if detected:
             self.game_dir_var.set(str(detected))
-
-    def _browse(self) -> None:
-        initial = self.game_dir_var.get().strip() or str(Path.home())
-        path = filedialog.askdirectory(
-            title="Selecione a pasta Project Gorgon",
-            initialdir=initial,
-        )
-        if path:
-            self.game_dir_var.set(path)
 
     def _append_log(self, text: str) -> None:
         self.log.configure(state="normal")
@@ -127,24 +115,21 @@ class InstallerApp(tk.Tk):
 
     def _set_busy(self, busy: bool) -> None:
         self._busy = busy
-        self.install_btn.configure(state="disabled" if busy else "normal")
+        self.uninstall_btn.configure(state="disabled" if busy else "normal")
 
     def _set_progress(self, pct: int, msg: str) -> None:
         self.progress["value"] = pct
         self.status_var.set(msg)
 
     def _validate(self) -> Path | None:
-        missing = validate_pack(ROOT)
-        if missing:
-            messagebox.showerror(
-                "Pacote incompleto",
-                "Extraia o .zip inteiro antes de instalar.\n\nFalta:\n"
-                + "\n".join(f"• {m}" for m in missing),
-            )
-            return None
         game = self.game_dir_var.get().strip()
         if not game:
-            messagebox.showwarning("Atenção", "Informe ou detecte a pasta do jogo.")
+            messagebox.showwarning(
+                "Atenção",
+                "Não foi possível detectar a pasta do jogo.\n\n"
+                f"Execute {UNINSTALLER_WIN_EXE} de dentro de:\n"
+                "…\\Project Gorgon\\",
+            )
             return None
         game_path = Path(game)
         if not game_path.is_dir():
@@ -152,15 +137,20 @@ class InstallerApp(tk.Tk):
             return None
         return game_path
 
-    def _run_install(self) -> None:
+    def _run_uninstall(self) -> None:
         if self._busy:
             return
         game_path = self._validate()
         if game_path is None:
             return
         if not messagebox.askyesno(
-            "Confirmar",
-            "Instalar BepInEx, plugin e language pack PT-BR neste computador?",
+            "Confirmar desinstalação",
+            "Remover tradução PT-BR deste computador?\n\n"
+            "Serão apagados:\n"
+            "• BepInEx, dotnet, winhttp.dll (pasta do jogo)\n"
+            "• Plugins PgTranslateLive e Translator\n"
+            "• Language pack em AppData\n\n"
+            "O jogo voltará ao inglês. Continuar?",
         ):
             return
 
@@ -175,26 +165,28 @@ class InstallerApp(tk.Tk):
             def on_progress(pct: int, msg: str) -> None:
                 self.after(0, lambda: self._set_progress(pct, msg))
 
-            result = install_all(ROOT, game_path, progress=on_progress)
-            self.after(0, lambda: self._on_done(game_path, result))
+            result = uninstall_all(game_path, progress=on_progress)
+            self.after(0, lambda: self._on_done(result))
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def _on_done(self, game_path: Path, result) -> None:
+    def _on_done(self, result) -> None:
         self._set_busy(False)
         for line in result.log:
             self._append_log(line)
 
         if result.ok:
+            if getattr(sys, "frozen", False):
+                schedule_self_delete(Path(sys.executable))
             messagebox.showinfo(
-                "Pronto! Pode abrir o jogo",
-                build_success_message(game_path),
+                "Desinstalação concluída",
+                build_uninstall_message(result),
             )
             self._show_report()
         else:
             messagebox.showerror(
-                "Falha na instalação",
-                "Houve erro na instalação.\n\n"
+                "Falha na desinstalação",
+                "Houve erro ao remover o mod.\n\n"
                 + "\n".join(result.errors[:8])
                 + "\n\nVeja o log para detalhes.",
             )
@@ -202,7 +194,7 @@ class InstallerApp(tk.Tk):
 
     def _show_report(self) -> None:
         win = tk.Toplevel(self)
-        win.title("Relatório técnico")
+        win.title("Relatório técnico — desinstalação")
         win.geometry("720x480")
         win.minsize(520, 320)
 
@@ -218,18 +210,13 @@ def main() -> None:
     _set_app_id()
     if sys.platform != "win32":
         print(
-            "Este instalador é para Windows.\n"
-            "No Linux use INSTALAR (zenity) na pasta pg-ptbr.",
+            "Este desinstalador é para Windows.\n"
+            "No Linux use uninstall-language-pack-ptbr na pasta do jogo.",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    missing = validate_pack(ROOT)
-    if missing and not getattr(sys, "frozen", False):
-        print(f"Erro: pacote incompleto em {ROOT}", file=sys.stderr)
-        sys.exit(1)
-
-    app = InstallerApp()
+    app = UninstallerApp()
     app.mainloop()
 
 

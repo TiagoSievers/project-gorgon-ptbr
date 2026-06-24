@@ -29,13 +29,27 @@ if [[ -z "${GAME_DIR:-}" || ! -d "$GAME_DIR" ]]; then
 fi
 
 [[ -f "$GAME_DIR/winhttp.dll" ]] && pass "BepInEx loader (winhttp.dll)" || bad "winhttp.dll ausente — rode ./install.sh"
+[[ -f "$GAME_DIR/dotnet/coreclr.dll" ]] && pass "BepInEx CoreCLR (dotnet/coreclr.dll)" || bad "dotnet/coreclr.dll ausente — BepInEx IL2CPP incompleto"
 [[ -f "$GAME_DIR/BepInEx/core/BepInEx.Unity.IL2CPP.dll" ]] && pass "BepInEx IL2CPP core" || bad "BepInEx core ausente"
 
 plugin="$GAME_DIR/BepInEx/plugins/PgTranslateLive/PgTranslateLive.dll"
 [[ -f "$plugin" ]] && pass "Plugin PgTranslateLive.dll" || bad "Plugin ausente em BepInEx/plugins/PgTranslateLive/"
 
+translator="$GAME_DIR/BepInEx/plugins/Translator/Translator.dll"
+if [[ -f "$ROOT/dist/Translator.dll" || -f "$translator" ]]; then
+  [[ -f "$translator" ]] && pass "Mod Translator.dll" || bad "Translator.dll ausente em BepInEx/plugins/Translator/"
+  ui_yaml="$GAME_DIR/BepInEx/plugins/Translator/translations/pt-BR/ui.yaml"
+  [[ -f "$ui_yaml" ]] && pass "Traduções YAML pt-BR (ui.yaml)" || note "ui.yaml ausente no Translator"
+else
+  note "Translator.dll não faz parte deste pacote (ok em builds antigas)"
+fi
+
 cfg="$GAME_DIR/BepInEx/config/com.pg.translatelive.cfg"
 [[ -f "$cfg" ]] && pass "Config com.pg.translatelive.cfg" || note "Config do plugin ausente (criado na 1ª execução?)"
+
+[[ -f "$GAME_DIR/uninstall-language-pack-ptbr" || -f "$GAME_DIR/uninstall-language-pack-ptbr.exe" ]] \
+  && pass "Desinstalador na pasta do jogo" \
+  || note "Desinstalador ausente na pasta do jogo (reinstale com pacote v0.1.0+)"
 
 linux_trans="$UNITY_LINUX/Translation/version.json"
 proton_ok=0

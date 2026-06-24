@@ -36,6 +36,11 @@ ensure_vendor_zip() {
     cp "$game/winhttp.dll.backup" "$staging/BepInExPack/winhttp.dll"
     [[ -f "$game/doorstop_config.ini" ]] && cp "$game/doorstop_config.ini" "$staging/BepInExPack/"
     [[ -f "$game/.doorstop_version.backup" ]] && cp "$game/.doorstop_version.backup" "$staging/BepInExPack/.doorstop_version"
+    if [[ -d "$game/dotnet" ]]; then
+      cp -a "$game/dotnet" "$staging/BepInExPack/dotnet"
+    else
+      die "Backup local sem pasta dotnet/ — rode: make fetch-bepinex-vendor"
+    fi
     mkdir -p "$(dirname "$VENDOR_ZIP")"
     rm -f "$VENDOR_ZIP"
     (cd "$staging" && zip -qr "$VENDOR_ZIP" BepInExPack)
@@ -58,17 +63,29 @@ mkdir -p "$PACK_DIR/scripts" "$PACK_DIR/dist" "$PACK_DIR/output" "$PACK_DIR/vend
 # Único instalador visível no pacote do jogador
 cp "$ROOT/installer/INSTALAR" "$PACK_DIR/INSTALAR"
 cp "$ROOT/installer/COMO-INSTALAR.txt" "$PACK_DIR/COMO-INSTALAR.txt"
+cp -a "$ROOT/installer/game-uninstall" "$PACK_DIR/game-uninstall"
 cp "$ROOT/scripts/install.sh" \
    "$ROOT/scripts/install-paths.sh" \
+   "$ROOT/scripts/uninstall.sh" \
    "$ROOT/scripts/verify-install.sh" \
    "$PACK_DIR/scripts/"
 chmod +x "$PACK_DIR/INSTALAR" \
   "$PACK_DIR/scripts/install.sh" \
-  "$PACK_DIR/scripts/verify-install.sh"
+  "$PACK_DIR/scripts/uninstall.sh" \
+  "$PACK_DIR/scripts/verify-install.sh" \
+  "$PACK_DIR/game-uninstall/uninstall-language-pack-ptbr"
 
-# Plugin + tradução + BepInEx
-cp -a "$ROOT/dist/PgTranslateLive.dll" "$ROOT/dist/com.pg.translatelive.cfg" "$PACK_DIR/dist/" 2>/dev/null || \
-  cp -a "$ROOT/dist/." "$PACK_DIR/dist/"
+# Plugin + tradução + BepInEx (só DLLs/config em dist/ — sem INSTALAR.exe)
+for artifact in \
+  PgTranslateLive.dll \
+  Translator.dll \
+  com.pg.translatelive.cfg \
+  com.pickteam.translator.cfg; do
+  if [[ -f "$ROOT/dist/$artifact" ]]; then
+    cp "$ROOT/dist/$artifact" "$PACK_DIR/dist/"
+  fi
+done
+[[ -f "$PACK_DIR/dist/PgTranslateLive.dll" ]] || cp "$ROOT/dist/PgTranslateLive.dll" "$PACK_DIR/dist/" 2>/dev/null || true
 cp -a "$ROOT/output/Translation" "$PACK_DIR/output/"
 [[ -d "$ROOT/output/pt-BR" ]] && cp -a "$ROOT/output/pt-BR" "$PACK_DIR/output/"
 cp "$VENDOR_ZIP" "$PACK_DIR/vendor/BepInExPack_IL2CPP.zip"
@@ -78,7 +95,8 @@ Project Gorgon — Português (BR) v${PACK_VERSION}
 
 Leia: COMO-INSTALAR.txt
 
-Resumo: extrair → dois cliques em INSTALAR → configurar Steam → jogar.
+Resumo: extrair → botão direito em INSTALAR → Executar → configurar Steam → jogar.
+Para desinstalar depois: uninstall-language-pack-ptbr na pasta do jogo.
 EOF
 
 echo ""

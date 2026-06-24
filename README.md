@@ -9,7 +9,7 @@ Projeto fan — não oficial. Requer o jogo na Steam (pago ou demo).
 ## Baixar (GitHub Release)
 
 1. Abra **[Releases](https://github.com/TiagoSievers/project-gorgon-ptbr/releases)** no GitHub  
-2. Clique na release mais recente (ex.: **v0.2.0**)  
+2. Clique na release mais recente (ex.: **v0.1.0**)  
 3. Role até **Assets**  
 4. Baixe **só o arquivo do seu sistema** (ignore *Source code* — é código-fonte automático do GitHub):
 
@@ -27,7 +27,7 @@ Link direto da última release:
 
 1. Baixe **`Project-Gorgon-PT-BR-v…-Linux.zip`** (tabela acima)
 2. Extraia — aparece a pasta **`pg-ptbr/`**
-3. **Dois cliques** em **`INSTALAR`** (leia `COMO-INSTALAR.txt` se precisar)
+3. **Botão direito** em **`INSTALAR`** → **Executar** (leia `COMO-INSTALAR.txt` se precisar)
 
    No Ubuntu/Nautilus, na 1ª vez: botão direito → Propriedades → marque **Permitir executar como programa**.
 
@@ -59,16 +59,16 @@ Também: Propriedades → Compatibilidade → **Forçar Steam Play** → Proton 
 
 1. Baixe **`Project-Gorgon-PT-BR-v…-Windows.zip`** (tabela em [Baixar](#baixar-github-release))
 2. Extraia a pasta **`pg-ptbr-windows/`**
-3. **Dois cliques em `INSTALAR.exe`** — não precisa instalar Python
+3. **Dois cliques em `INSTALAR.exe`** — ou **Desinstalar** no mesmo programa para remover o mod
 
-   (`INSTALAR.bat` só é fallback de desenvolvimento se o `.exe` não existir.)
+   Se o SmartScreen avisar, clique em **Executar assim mesmo** (mod fan sem assinatura digital).
 
 Não precisa de Launch Options do Proton (só Linux).
 
 **Mantenedor — gerar zips para Release (com INSTALAR.exe no Windows):**
 
 Dispare no GitHub: **Actions → Release → Run workflow**  
-Ou crie tag `v0.2.0` — publica Linux + Windows automaticamente.
+Ou crie tag `v0.1.0` — publica Linux + Windows automaticamente.
 
 Local (Windows VM, com PowerShell):
 
@@ -119,7 +119,8 @@ Edite `glossary.json` para termos fixos. Detalhes do pipeline: `make help`.
 | Recurso | Como |
 |---------|------|
 | Menu, itens, quests, UI | `output/Translation/` — language pack do jogo |
-| Diálogo **Falar** (NPC) | Plugin + Google Translate ao vivo |
+| Botões UI (Talk, Buy, etc.) | Mod **Translator** + `output/pt-BR/*.yaml` |
+| Diálogo **Falar** (NPC) | Plugin **PgTranslateLive** + Google Translate ao vivo |
 | Log do plugin | `Project Gorgon/BepInEx/LogOutput.log` |
 | Config | `BepInEx/config/com.pg.translatelive.cfg` |
 
@@ -133,7 +134,7 @@ Tudo que o jogador precisa fica **numa pasta só**:
 
 ```
 pack/pg-ptbr/
-├── INSTALAR               # único instalador (dois cliques)
+├── INSTALAR               # instalar (botão direito → Executar)
 ├── COMO-INSTALAR.txt
 ├── dist/                  # interno
 ├── output/                # interno

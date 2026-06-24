@@ -14,13 +14,16 @@ die() { echo "Erro: $*" >&2; exit 1; }
   "$ROOT/scripts/assemble-pack-windows.sh"
 }
 
-[[ -f "$PACK_DIR/INSTALAR.exe" ]] || die \
-  "INSTALAR.exe ausente em $PACK_DIR — gere no Windows: powershell -File scripts/build-windows-installer.ps1
-   ou dispare GitHub Actions: .github/workflows/release.yml (workflow_dispatch)"
+[[ -f "$PACK_DIR/INSTALAR.exe" ]] || die "INSTALAR.exe ausente em $PACK_DIR"
+[[ -f "$PACK_DIR/dist/Translator.dll" ]] || die "dist/Translator.dll ausente no pacote"
+[[ -d "$PACK_DIR/output/pt-BR" ]] || die "output/pt-BR/ ausente no pacote"
+[[ ! -f "$PACK_DIR/dist/INSTALAR.exe" ]] || die "dist/INSTALAR.exe não deve estar no pacote (duplicata)"
+[[ ! -f "$PACK_DIR/dist/INSTALAR.pdb" ]] || die "dist/INSTALAR.pdb não deve estar no pacote (debug)"
 
-[[ -f "$VERSION_FILE" ]] || die "version.json ausente"
+[[ -f "$VERSION_FILE" ]] || VERSION_FILE="$PACK_DIR/output/Translation/version.json"
+[[ -f "$VERSION_FILE" ]] || die "version.json ausente (output/Translation/)"
 
-PACK_VERSION="$(python3 -c "import json; print(json.load(open('$VERSION_FILE'))['Version'])")"
+PACK_VERSION="$(python3 -c "import json; print(json.load(open(r'''$VERSION_FILE'''))['Version'])")"
 ZIP_NAME="Project-Gorgon-PT-BR-v${PACK_VERSION}-Windows.zip"
 ZIP_OUT="$RELEASES_DIR/${ZIP_NAME}"
 
@@ -37,4 +40,4 @@ echo "Release Windows (GitHub → Releases → anexar este arquivo):"
 echo "  $ZIP_OUT"
 du -sh "$ZIP_OUT"
 echo ""
-echo "Jogador: extrair → pasta pg-ptbr-windows → dois cliques em INSTALAR.exe"
+echo "Jogador: extrair → pasta pg-ptbr-windows → INSTALAR.exe; desinstalar: uninstall-language-pack-ptbr.exe"

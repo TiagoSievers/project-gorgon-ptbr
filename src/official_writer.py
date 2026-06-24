@@ -8,6 +8,35 @@ from .fetch_cdn import read_game_version
 from .paths import official_out_dir, translation_en_dir
 from .translate import load_cache
 
+PACK_VERSION = "0.1.0"
+PACK_REPO = "https://github.com/TiagoSievers/project-gorgon-ptbr"
+PACK_GITHUB_PROFILE = "https://github.com/TiagoSievers"
+PACK_LINKEDIN = "https://www.linkedin.com/in/tiago-sievers-a175661a8/"
+
+
+def pack_version_payload(cdn_version: str) -> dict:
+    return {
+        "CdnFileVersion": str(cdn_version),
+        "Credits": (
+            f"Tiago Sievers — GitHub: {PACK_REPO} | LinkedIn: {PACK_LINKEDIN}"
+        ),
+        "Description": (
+            "Language pack comunitário (pt-BR) para Project Gorgon. "
+            "Inclui tradução de interface, itens e missões. "
+            "O instalador também adiciona o plugin PgTranslateLive com Google Translate "
+            "para diálogos ao vivo com NPCs (requer internet). "
+            f"Repositório: {PACK_REPO}"
+        ),
+        "Format": 1,
+        "LanguageCode": "pt-BR",
+        "Name": "Project Gorgon — Português (Brasil)",
+        "Notes": (
+            f"Versão inicial (v{PACK_VERSION}). "
+            "Projeto fan — não oficial e não afiliado à Elder Game, LLC."
+        ),
+        "Version": PACK_VERSION,
+    }
+
 
 def _checksum(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -49,16 +78,7 @@ def write_official(version: str | None = None) -> Path:
         files_meta[en_path.name] = _checksum(payload.encode("utf-8"))
         print(f"  {en_path.name}: {len(out_data)} chaves")
 
-    version_payload = {
-        "CdnFileVersion": str(version),
-        "Credits": "Pipeline automático PG PT-BR (Google Translate) — revisão humana recomendada",
-        "Description": "Tradução parcial para português brasileiro gerada a partir do CDN oficial.",
-        "Format": 1,
-        "LanguageCode": "pt-BR",
-        "Name": "Project Gorgon — Português (BR)",
-        "Notes": "Atualize com: make write && make install-official",
-        "Version": "0.2.0",
-    }
+    version_payload = pack_version_payload(version)
     version_path = out_dir / "version.json"
     version_path.write_text(json.dumps(version_payload, indent=2) + "\n", encoding="utf-8")
 

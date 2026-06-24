@@ -15,6 +15,7 @@ source "$SCRIPT_DIR/install-paths.sh"
 DIST_DLL="$ROOT/dist/PgTranslateLive.dll"
 BUILD_DLL="$ROOT/bepinex-plugin/PgTranslateLive/bin/Release/net6.0/PgTranslateLive.dll"
 DIST_CFG="$ROOT/dist/com.pg.translatelive.cfg"
+DIST_TRANSLATOR_CFG="$ROOT/dist/com.pickteam.translator.cfg"
 PACK_SRC="$ROOT/output/Translation"
 MOD_DL="$ROOT/.cache/mod-downloads"
 
@@ -141,6 +142,47 @@ install_plugin() {
   progress_emit 64 "Plugin instalado"
 }
 
+install_translator() {
+  local dll_src="$ROOT/dist/Translator.dll"
+  local yaml_src="$ROOT/output/pt-BR"
+  local dest_plugin dest_yaml cfg_dir
+  if [[ ! -f "$dll_src" ]]; then
+    info "Translator.dll ausente no pacote — pulando mod Translator"
+    return
+  fi
+  if [[ ! -d "$yaml_src" ]]; then
+    die "output/pt-BR/ não encontrado"
+  fi
+  progress_emit 66 "Instalando Translator + YAML pt-BR…"
+  dest_plugin="$GAME_DIR/BepInEx/plugins/Translator"
+  dest_yaml="$dest_plugin/translations/pt-BR"
+  cfg_dir="$GAME_DIR/BepInEx/config"
+  mkdir -p "$dest_plugin" "$cfg_dir"
+  cp "$dll_src" "$dest_plugin/Translator.dll"
+  rm -rf "$dest_yaml"
+  mkdir -p "$dest_yaml"
+  cp -a "$yaml_src/." "$dest_yaml/"
+  if [[ -f "$DIST_TRANSLATOR_CFG" ]]; then
+    cp "$DIST_TRANSLATOR_CFG" "$cfg_dir/com.pickteam.translator.cfg"
+  fi
+  info "Translator: $dest_plugin/Translator.dll"
+  info "YAML pt-BR: $dest_yaml"
+  progress_emit 68 "Translator instalado"
+}
+
+install_game_uninstaller() {
+  local src="$ROOT/game-uninstall/uninstall-language-pack-ptbr"
+  local dest="$GAME_DIR/uninstall-language-pack-ptbr"
+  if [[ ! -f "$src" ]]; then
+    die "game-uninstall/uninstall-language-pack-ptbr ausente no pacote"
+  fi
+  progress_emit 82 "Instalando desinstalador na pasta do jogo…"
+  rm -f "$GAME_DIR/BepInEx/DESINSTALAR" "$GAME_DIR/BepInEx/DESINSTALAR.exe" 2>/dev/null || true
+  cp "$src" "$dest"
+  chmod +x "$dest"
+  info "Desinstalador: $dest"
+}
+
 install_translation_pack() {
   local i prefix label count pct
   count="${#PROTON_PREFIXES[@]}"
@@ -162,18 +204,8 @@ install_translation_pack() {
 }
 
 install_translator_yaml() {
-  local yaml_src="$ROOT/output/pt-BR"
-  local yaml_dest="$GAME_DIR/BepInEx/plugins/Translator/translations/pt-BR"
-  if [[ ! -d "$yaml_src" ]]; then
-    return
-  fi
-  if [[ ! -d "$GAME_DIR/BepInEx/plugins/Translator" ]]; then
-    echo "    (mod Translator não instalado — pulando output/pt-BR; UI via language pack)"
-    return
-  fi
-  mkdir -p "$yaml_dest"
-  cp -a "$yaml_src/." "$yaml_dest/"
-  info "YAML Translator: $yaml_dest"
+  # Legado: YAML já copiado em install_translator()
+  :
 }
 
 print_installed_paths() {
@@ -277,7 +309,9 @@ main() {
   progress_emit 22 "Pacote PT-BR verificado"
   install_bepinex
   install_plugin
+  install_translator
   install_translation_pack
+  install_game_uninstaller
   install_translator_yaml
   progress_emit 92 "Gerando relatório de instalação…"
   print_finish
