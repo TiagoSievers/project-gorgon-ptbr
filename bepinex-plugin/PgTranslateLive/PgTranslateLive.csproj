@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>PgTranslateLive</AssemblyName>
     <Product>PgTranslateLive — Falar (NPC) + Google Translate</Product>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <GameDir Condition="'$(GameDir)' == ''">$(HOME)/.steam/debian-installation/steamapps/common/Project Gorgon</GameDir>

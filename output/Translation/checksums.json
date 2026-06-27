@@ -22,11 +22,11 @@
   "version": {
     "CdnFileVersion": "470",
     "Credits": "Tiago Sievers — GitHub: https://github.com/TiagoSievers/project-gorgon-ptbr | LinkedIn: https://www.linkedin.com/in/tiago-sievers-a175661a8/",
-    "Description": "Language pack comunitário (pt-BR) para Project Gorgon. Inclui tradução de interface, itens e missões. O instalador também adiciona o plugin PgTranslateLive com Google Translate para diálogos ao vivo com NPCs (requer internet). Repositório: https://github.com/TiagoSievers/project-gorgon-ptbr",
+    "Description": "Language pack comunitário (pt-BR) para Project Gorgon. Inclui tradução de interface, itens e missões. O instalador também adiciona o plugin PgTranslateLive: consulta npcs.yaml antes do Google Translate e salva falas novas ao falar com NPCs (requer internet só para falas ainda não traduzidas). Repositório: https://github.com/TiagoSievers/project-gorgon-ptbr",
     "Format": 1,
     "LanguageCode": "pt-BR",
     "Name": "Project Gorgon — Português (Brasil)",
-    "Notes": "Versão inicial (v0.1.0). Projeto fan — não oficial e não afiliado à Elder Game, LLC.",
-    "Version": "0.1.0"
+    "Notes": "v0.1.1 — PgTranslateLive v0.10: cache de falas em npcs.yaml (Google só se ainda não traduzido). Projeto fan — não oficial e não afiliado à Elder Game, LLC.",
+    "Version": "0.1.1"
   }
 }

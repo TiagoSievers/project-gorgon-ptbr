@@ -8,7 +8,7 @@ namespace PgTranslateLive;
 /// <summary>
 /// Boot: ver fluxo completo em FLOW.md (Steam → BepInEx → Load → Unity → Translation/ → login).
 /// </summary>
-[BepInPlugin("com.pg.translatelive", "Pg Translate Live", "0.9.0")]
+[BepInPlugin("com.pg.translatelive", "Pg Translate Live", "0.10.0")]
 public class Plugin : BasePlugin
 {
     internal static new ManualLogSource Log = null!;
@@ -19,12 +19,13 @@ public class Plugin : BasePlugin
         Log = base.Log;
 
         TranslateClient.Init(Config);
+        NpcYamlStore.Init(Config);
 
         var harmony = new Harmony("com.pg.translatelive");
         var talkPatches = TalkScreenPatch.PatchAll(harmony);
 
-        LogAscii.LogInfo($"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss} Pg Translate Live v0.9.0 - Falar + Google");
+        LogAscii.LogInfo($"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss} Pg Translate Live v0.10.0 - Falar + NpcYaml + Google");
         LogAscii.LogInfo($"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss} Patches: talk:{talkPatches}");
-        LogAscii.LogInfo($"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss} UseGoogle: {TranslateClient.UseGoogle} | TalkVerbose: {TranslateClient.LogVerbose}");
+        LogAscii.LogInfo($"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss} UseGoogle: {TranslateClient.UseGoogle} | NpcYaml: {NpcYamlStore.Count} | TalkVerbose: {TranslateClient.LogVerbose}");
     }
 }

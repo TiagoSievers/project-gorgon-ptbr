@@ -42,6 +42,7 @@ Entrar no mundo
 | **TranslateClient.cs** | Decide se traduz, tamanho mínimo do texto, quantas threads usar. Lê o `.cfg`. |
 | **GoogleTranslate.cs** | Chama a API do Google Translate pela internet. |
 | **TalkTurn.cs** | Guarda a tradução da conversa atual para não traduzir a mesma frase duas vezes. |
+| **NpcYamlStore.cs** | Consulta `npcs.yaml` antes do Google; salva falas novas após traduzir. |
 | **TalkLog.cs** | Escreve no log quando você usa **Falar** (útil para debug). |
 | **Il2CppStringHelper.cs** | Ajuda a ler/escrever texto dentro do Unity (IL2CPP). |
 | **LogAscii.cs** | Log sem acentos quebrados no Proton/Linux. |
@@ -66,15 +67,23 @@ Entrar no mundo
 
 ### 2. Diálogo **Falar** com NPC (ao vivo)
 
-- **Quem traduz:** plugin + Google, na hora.
+- **Quem traduz:** plugin — primeiro consulta `npcs.yaml`, só chama Google se a fala ainda não estiver lá.
 - **Quando:** só quando você clica **Falar** num NPC.
 - **Fluxo:**
 
 ```
 Você clica Falar
     → TalkScreenPatch pega o texto
-    → GoogleTranslate traduz
+    → NpcYamlStore: já tem em npcs.yaml? → usa PT local (sem internet)
+    → senão → GoogleTranslate traduz → salva em npcs.yaml para a próxima vez
     → TalkTurn guarda e mostra em PT na tela
+```
+
+**Sincronizar com o repo (mantenedor):**
+
+```bash
+./scripts/merge-npcs-from-game.sh
+# mescla .../Translator/translations/pt-BR/npcs.yaml → output/pt-BR/npcs.yaml
 ```
 
 ---

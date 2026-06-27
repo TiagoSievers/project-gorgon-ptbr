@@ -20,10 +20,17 @@ PASSO 1 — Extrair
 
 PASSO 2 — Instalar
   Entre na pasta pg-ptbr
-  Botão direito em:  INSTALAR  →  Executar
 
-  Na primeira vez no Linux:
-    botão direito → Propriedades → marque "Permitir executar como programa"
+  Opção A — Terminal (recomendado; sempre funciona após extrair o .zip):
+    botão direito na pasta pg-ptbr → Abrir no Terminal
+    bash INSTALAR
+
+  Opção B — Dois cliques / botão direito → Executar:
+    use INSTALAR.sh (ou INSTALAR)
+    Se não aparecer "Executar", use a Opção A.
+
+  Na primeira vez, o .zip pode remover a permissão de execução.
+  Terminal: chmod +x INSTALAR && ./INSTALAR
 
   Clique Sim → confirme a pasta do jogo → aguarde terminar.
 

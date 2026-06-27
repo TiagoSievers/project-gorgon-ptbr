@@ -41,7 +41,7 @@ BEPINEX_URL ?= https://thunderstore.io/package/download/BepInEx/BepInExPack_IL2C
 .PHONY: pack-windows release-pack-windows build-windows-exe
 .PHONY: install-bepinex-proton verify-bepinex-proton setup-mod-proton
 .PHONY: clean-bepinex-linux steam-proton-hint
-.PHONY: fetch extract translate translate-priority write pipeline serve
+.PHONY: fetch extract translate translate-priority write pipeline serve merge-npcs
 .PHONY: install-translation install-official
 
 help: ## Mostra esta ajuda
@@ -61,6 +61,7 @@ help: ## Mostra esta ajuda
 	@echo "  make setup-mod-proton   BepInEx + plugin (compila)"
 	@echo "  make install-plugin     Compila e instala PgTranslateLive"
 	@echo "  make build-plugin       Só compilar"
+	@echo "  make merge-npcs         Mescla npcs.yaml do jogo → output/pt-BR/"
 	@echo ""
 	@echo "Pipeline CDN (mantenedor):"
 	@echo "  make fetch              Baixa CDN + Translation.zip"
@@ -176,6 +177,10 @@ build-plugin: ## Compila plugin BepInEx PgTranslateLive
 	@test -x "$(DOTNET)" || { echo "Erro: dotnet não encontrado em $(DOTNET)"; exit 1; }
 	"$(DOTNET)" build "$(PLUGIN_PROJECT)" -c Release -p:GameDir="$(GAME_DIR)"
 	@echo "Plugin: $(PLUGIN_DLL)"
+
+merge-npcs: ## Mescla npcs.yaml capturado no jogo → output/pt-BR/npcs.yaml
+	@chmod +x "$(ROOT)/scripts/merge-npcs-from-game.sh"
+	GAME_DIR="$(GAME_DIR)" "$(ROOT)/scripts/merge-npcs-from-game.sh"
 
 configure-live-plugin: ## Garante cfg (UseGoogle=true, TalkVerbose=true)
 	@if [ -f "$(LIVE_PLUGIN_CFG)" ]; then \
