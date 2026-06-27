@@ -62,6 +62,7 @@ mkdir -p "$PACK_DIR/scripts" "$PACK_DIR/dist" "$PACK_DIR/output" "$PACK_DIR/vend
 
 # Único instalador visível no pacote do jogador
 cp "$ROOT/installer/INSTALAR" "$PACK_DIR/INSTALAR"
+cp "$ROOT/installer/INSTALAR" "$PACK_DIR/INSTALAR.sh"
 cp "$ROOT/installer/COMO-INSTALAR.txt" "$PACK_DIR/COMO-INSTALAR.txt"
 cp -a "$ROOT/installer/game-uninstall" "$PACK_DIR/game-uninstall"
 cp "$ROOT/scripts/install.sh" \
@@ -70,6 +71,7 @@ cp "$ROOT/scripts/install.sh" \
    "$ROOT/scripts/verify-install.sh" \
    "$PACK_DIR/scripts/"
 chmod +x "$PACK_DIR/INSTALAR" \
+  "$PACK_DIR/INSTALAR.sh" \
   "$PACK_DIR/scripts/install.sh" \
   "$PACK_DIR/scripts/uninstall.sh" \
   "$PACK_DIR/scripts/verify-install.sh" \

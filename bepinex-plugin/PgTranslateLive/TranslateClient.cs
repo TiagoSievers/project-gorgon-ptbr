@@ -102,6 +102,7 @@ internal static class TranslateClient
         var pendingKinds = new List<TextKind>();
         var speechPending = new List<string>();
         var choicePending = new List<string>();
+        var yamlHits = 0;
 
         for (var i = 0; i < texts.Length; i++)
         {
@@ -122,6 +123,15 @@ internal static class TranslateClient
                 continue;
             }
 
+            if (NpcYamlStore.TryGet(text, out var cached))
+            {
+                TalkTurn.Store(text, cached);
+                results[i] = cached;
+                yamlHits++;
+                TalkLog.Unchanged(kind, text, "npcs.yaml");
+                continue;
+            }
+
             pendingIndices.Add(i);
             pendingTexts.Add(text);
             pendingKinds.Add(kind);
@@ -131,6 +141,9 @@ internal static class TranslateClient
             else if (kind == TextKind.Choice)
                 choicePending.Add(text);
         }
+
+        if (yamlHits > 0)
+            TalkLog.Info($"NpcYaml: {yamlHits} texto(s) do cache local (sem Google)");
 
         if (pendingIndices.Count == 0)
             return results;
@@ -184,6 +197,7 @@ internal static class TranslateClient
 
                 TalkTurn.Store(source, translated);
                 results[sourceIndex] = translated;
+                NpcYamlStore.Record(source, translated);
                 TalkLog.GoogleTranslated(kind, source, translated);
             }
         }

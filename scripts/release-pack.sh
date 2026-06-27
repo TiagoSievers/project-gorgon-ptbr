@@ -25,7 +25,15 @@ PACK_PARENT="$(dirname "$PACK_DIR")"
 PACK_NAME="$(basename "$PACK_DIR")"
 
 command -v zip >/dev/null 2>&1 || die "zip não encontrado (sudo apt install zip)"
+
+# Zip padrão não preserva +x se os arquivos no pack perderam permissão; garantir antes de compactar.
+chmod +x \
+  "$PACK_DIR/INSTALAR" \
+  "$PACK_DIR/scripts/"*.sh \
+  "$PACK_DIR/game-uninstall/uninstall-language-pack-ptbr" 2>/dev/null || true
+
 rm -f "$ZIP_OUT"
+# zip no Linux grava atributos Unix (modo 755) quando os arquivos já são executáveis.
 (cd "$PACK_PARENT" && zip -qr "$ZIP_OUT" "$PACK_NAME")
 
 echo ""

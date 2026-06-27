@@ -72,6 +72,10 @@ PASSO 3 — Jogar
   Abra o Project Gorgon pela Steam.
   Se perguntar, aceite o language pack PT-BR.
 
+  Diálogo Falar (NPC): o plugin consulta npcs.yaml antes do Google.
+  Falas novas são salvas automaticamente; internet só para texto ainda
+  não traduzido.
+
   No Windows NÃO é necessário configurar Launch Options do Proton
   (isso é só para Linux).
 
