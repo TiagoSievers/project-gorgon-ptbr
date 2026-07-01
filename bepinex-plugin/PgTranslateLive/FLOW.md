@@ -4,6 +4,27 @@ Guia simples: ordem do jogo, arquivos do plugin e o que cada um faz.
 
 ---
 
+## Estrutura de pastas (`src/`)
+
+Todo o código C# está unificado em **`src/main.cs`** (~6000 linhas), organizado por `#region`:
+
+| Região | Conteúdo original |
+|--------|-------------------|
+| **Config** | PluginSettings, PatchStrategy |
+| **Paths** | GameDataPaths |
+| **Logging** | LogAscii, TraceLog, TalkLog |
+| **Il2Cpp** | Il2CppStringHelper, Il2CppArrayReflection |
+| **Stores** | CdnStringStore, NpcTalkStore, NpcRegistryStore |
+| **Translate** | TranslateClient, GoogleTranslate, GoogleAsyncQueue |
+| **Npc** | NpcNameResolver, EntityNpcIdCache |
+| **Talk** | patches, sessão, diálogo, discovery |
+| **Interaction** | InteractionClickPatch, UiInteractionFinder |
+| **Ui** | UiTextPatch |
+| **Debug** | probes, TalkDiagnostics |
+| **Plugin** | entrada BepInEx (`Load()`) |
+
+---
+
 ## Quando você abre o jogo
 
 ```

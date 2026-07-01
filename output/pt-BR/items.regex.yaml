@@ -1,4 +1,0 @@
-# Project Gorgon — items (regex) (pt-BR)
-# Gerado de templates/translator-ru + cache/translations.json
-
-"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>(.+)( x[\\d]+)? added to inventory.</i></color>$": "<cor=#FFBA7C><i>$3Status$4]</i></color> <color=#FFBA7C><i>$1$2? adicionado ao inventário.</i></color>"

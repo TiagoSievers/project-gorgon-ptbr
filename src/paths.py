@@ -55,9 +55,5 @@ def translation_en_dir(version: str) -> Path:
     return cdn_data_dir(version) / "Translation"
 
 
-def yaml_out_dir(lang: str = "pt-BR") -> Path:
-    return OUTPUT_DIR / lang
-
-
 def official_out_dir() -> Path:
     return OUTPUT_DIR / "Translation"

@@ -1,4 +1,4 @@
-# Gera zips Linux + Windows (com INSTALAR.exe) e publica na Release ao criar tag v*.
+# Publica Project-Gorgon-PT-BR-v*-Pack.zip ao criar tag v*.
 name: Release
 
 on:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  build-linux:
+  build-pack:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,54 +20,26 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Dependências e BepInEx vendor
+      - name: Dependências
         run: |
           sudo apt-get update
-          sudo apt-get install -y zip
+          sudo apt-get install -y zip mingw-w64
           bash scripts/fetch-bepinex-vendor.sh
 
-      - name: Pacote Linux
-        run: make release-pack
+      - name: Montar e zipar pack PT-BR
+        run: |
+          make release-pack-ptbr
+
+      - name: Verificar zip
+        run: bash scripts/verify-pack-zip.sh
 
       - uses: actions/upload-artifact@v4
         with:
-          name: linux-zip
-          path: releases/Project-Gorgon-PT-BR-*-Linux.zip
-
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: BepInEx vendor
-        shell: bash
-        run: bash scripts/fetch-bepinex-vendor.sh
-
-      - name: INSTALAR.exe (PyInstaller)
-        run: powershell -ExecutionPolicy Bypass -File scripts/build-windows-installer.ps1
-
-      - name: Pacote Windows
-        shell: bash
-        run: |
-          bash scripts/assemble-pack-windows.sh
-          bash scripts/release-pack-windows.sh
-
-      - name: Verificar INSTALAR.exe no zip
-        shell: bash
-        run: |
-          unzip -l releases/Project-Gorgon-PT-BR-*-Windows.zip | grep -F "INSTALAR.exe"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: windows-zip
-          path: releases/Project-Gorgon-PT-BR-*-Windows.zip
+          name: pack-zip
+          path: releases/Project-Gorgon-PT-BR-*-Pack.zip
 
   publish:
-    needs: [build-linux, build-windows]
+    needs: [build-pack]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -77,7 +49,5 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/linux-zip/*
-            artifacts/windows-zip/*
+          files: artifacts/pack-zip/*
           generate_release_notes: true

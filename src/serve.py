@@ -7,7 +7,7 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import fetch_cdn, extract, official_writer, translate, translator_template_writer, yaml_writer
+from . import fetch_cdn, extract, official_writer, translate
 from .install import install_official, write_pack_status
 from .pack_status import build_status
 from .paths import CACHE_DIR, ROOT
@@ -62,8 +62,6 @@ class Handler(BaseHTTPRequestHandler):
                 return
             try:
                 _busy = True
-                cdn_written = yaml_writer.write_yaml()
-                translator_template_writer.write_templates(cdn_written=cdn_written)
                 official_writer.write_official()
                 installed = install_official()
                 status = build_status()

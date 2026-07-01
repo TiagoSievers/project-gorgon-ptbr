@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>PgTranslateLive</AssemblyName>
     <Product>PgTranslateLive — Falar (NPC) + Google Translate</Product>
-    <Version>0.10.0</Version>
+    <Version>0.14.44</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <GameDir Condition="'$(GameDir)' == ''">$(HOME)/.steam/debian-installation/steamapps/common/Project Gorgon</GameDir>
@@ -14,10 +14,15 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>PgTranslateLive</RootNamespace>
+    <!-- Código unificado em src/main.cs (#region por domínio). -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="backup/**" />
   </ItemGroup>
 </Project>

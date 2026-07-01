@@ -1,0 +1,16 @@
+---
+description: PgTranslateLive — nunca remover logs de Interacao/subtexto/NPC
+globs: bepinex-plugin/PgTranslateLive/src/**
+alwaysApply: false
+---
+
+# Logs PgTranslateLive — protegidos
+
+Antes de editar `main.cs` ou logging do plugin, leia:
+
+**`bepinex-plugin/PgTranslateLive/src/RULE.md`**
+
+- **NUNCA** remover logs (`etapa Interacao`, `DebugSubtexto`, `Consultar npc json`, `npc ja existe no json`, etc.) sem pedido explícito do usuário.
+- Para menos ruído: desligar via cfg (`SubtextDebug`, `SelectionDebug`, `NpcIdDebug`), não apagar código.
+- Não deletar `InteractionSubtextCapture`, `FinishInteractionCapture` ou probes “por performance” sem autorização.
+- Respeitar comentários `LogPolicy.Reminder` em `main.cs`.

@@ -1,9 +1,0 @@
-# Project Gorgon — skills (regex) (pt-BR)
-# Gerado de templates/translator-ru + cache/translations.json
-
-"^([+-][\\d]+) to (.+)$": "$1 a $2"
-"^([+-][\\d]+) XP in (.+)$": "$1 para experiência de habilidade $2"
-"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>You earned ([\\d]+) XP and reached level ([\\d]+) in (.+).</i></color>$": "<cor=#FFBA7C><i>$4Status$5]</i></color> <color=#FFBA7C><i>Você ganhou $1XP e nível alcançado $2em $3.</i></color>"
-"^<color=#FFBA7C><i>[[]Status[\\]]</i></color> <color=#FFBA7C><i>You earned ([\\d]+) XP in (.+).</i></color>$": "<cor=#FFBA7C><i>$3Status$4]</i></color> <color=#FFBA7C><i>Você ganhou $1XP em $2.</i></color>"
-"^Ability: (.+)$": "Habilidade: $1"
-"^You leveled up to ([\\d]+) in (.+)!$": "Você subiu de nível para $1em $2!"

@@ -2,13 +2,17 @@
 .cache/
 cache/
 
-# --- Pacotes para jogador (vão no GitHub Release, não no git) ---
+# --- Pacotes / releases locais (gitignored; publicar no GitHub Release) ---
 releases/
 pack/
+copiar/
 
-# --- BepInEx zip (~31 MB) — baixar com: make fetch-bepinex-vendor ---
+# --- Staging deletar/ (legado local — só README versionado) ---
+deletar/*
+!deletar/README.md
+
+# --- BepInEx zip (~60 MB) — baixar: make fetch-bepinex-vendor ---
 vendor/BepInExPack_IL2CPP.zip
-vendor/Translator/Translator.dll
 
 # --- Plugin C# (build local) ---
 bepinex-plugin/**/bin/
@@ -16,29 +20,20 @@ bepinex-plugin/**/obj/
 bepinex-plugin/**/*.dll
 bepinex-plugin/**/*.pdb
 
-# --- dist/ — versionado: PgTranslateLive.dll, Translator.dll, *.cfg ---
-# Gerados localmente (PyInstaller), não commitar:
-dist/PgPtBr-Installer
-dist/INSTALAR.exe
-dist/INSTALAR.pdb
-dist/DESINSTALAR.exe
-dist/uninstall-language-pack-ptbr.exe
+# --- dist/ — versionado: PgTranslateLive.dll, com.pg.translatelive.cfg ---
+dist/*.exe
 dist/*.pdb
+dist/PgPtBr-Installer
 
-# --- Instaladores Windows (PyInstaller) ---
-# Gerar com: powershell -File scripts/build-windows-installer.ps1
+# --- PyInstaller legado (scripts em deletar/scripts-legado/) ---
 build/installer/
 installer/build/
 installer/dist/
-installer/game-uninstall/*.exe
 
-# --- Desinstalador legado (substituído por game-uninstall/uninstall-language-pack-ptbr) ---
-installer/DESINSTALAR
-
-# --- Inspeção / testes locais (extrair zip, validar BepInEx, etc.) ---
+# --- Inspeção local ---
 .tmp-*/
 
-# --- Logs do jogo/Steam (podem ter caminhos locais) ---
+# --- Logs (podem conter caminhos locais) ---
 Player.log
 *.log
 steam-*.log
@@ -60,22 +55,24 @@ build/
 .mypy_cache/
 .ruff_cache/
 
-# --- VM / ISO (não pertencem ao repo) ---
+# --- VM / ISO ---
 *.iso
 *.vdi
 *.vmdk
 *.vbox-*
-scripts/Mido.sh
 
 # --- IDE / OS ---
 .idea/
 .vscode/
-.cursor/
+.cursor/*
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/rules/
+!.cursor/rules/**
 *.swp
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# NOTA: output/Translation/ e output/pt-BR/ são versionados (~35 MB) — ver README.
-# NOTA: dist/PgTranslateLive.dll e dist/Translator.dll são versionados (plugins pré-compilados).
-# NOTA: installer/game-uninstall/uninstall-language-pack-ptbr (bash) é versionado; o .exe é gerado no build.
+# Versionado: output/Translation/, dist/PgTranslateLive.dll, dist/com.pg.translatelive.cfg
+# Legado arquivado: deletar/

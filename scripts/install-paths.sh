@@ -73,8 +73,24 @@ _resolve_steam_app_ids() {
     echo "$STEAM_APP_ID"
     return
   fi
+  # Pasta Translation/ única — Project Gorgon pago (342940).
   echo "$STEAM_APP_ID_FULL"
-  echo "$STEAM_APP_ID_DEMO"
+}
+
+# Copia pack CDN para Translation/ preservando strings_npctalk.json do jogo se já existir.
+copy_translation_pack() {
+  local src="$1" dest="$2"
+  local f base
+  mkdir -p "$dest"
+  for f in "$src"/*; do
+    [[ -e "$f" ]] || continue
+    base="$(basename "$f")"
+    if [[ "$base" == "strings_npctalk.json" && -f "$dest/strings_npctalk.json" ]]; then
+      echo "  preservando strings_npctalk.json existente ($dest)"
+      continue
+    fi
+    cp -a "$f" "$dest/"
+  done
 }
 
 _init_proton_paths() {
@@ -99,3 +115,4 @@ GAME_DIR="$(_find_game_dir 2>/dev/null || true)"
 STEAM_ROOT="$(_find_steam_root)"
 _init_proton_paths
 UNITY_LINUX="${UNITY_LINUX:-$HOME/.config/unity3d/Elder Game/Project Gorgon}"
+CANONICAL_TRANSLATION_DIR="${STEAM_ROOT}/steamapps/compatdata/${STEAM_APP_ID_FULL}/${PG_PROTON_SUFFIX}/Translation"

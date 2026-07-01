@@ -17,16 +17,17 @@
     "strings_skills.json": "7ba3fd70ffb8f8a9c483be4506538e99cc5c0c441dfe96cbfafcc5b00b1780e7",
     "strings_storagevaults.json": "62e56cef67af005e8bae7a539beacf0ff9bfbebd423cded4d5c7aeacc756651a",
     "strings_tsysclientinfo.json": "5c67932f60bbd79ee81bd634087b4e5312dc160da85227ce8b1171d3660a86af",
-    "strings_ui.json": "c9db8fbd552e5db062882af10ce73833da03a9536f6eddab4613a8f1c68ffc2d"
+    "strings_ui.json": "ddbaf35e68e7b1a8818a234ea4d072afb6ba3f7afab4b24b7d4e237ef9346861",
+    "strings_npctalk.json": "d2edbb6df0d8040474f32cbbd2bb6debf7f75b3311dda7cf24e43d713ae957b4"
   },
   "version": {
     "CdnFileVersion": "470",
     "Credits": "Tiago Sievers — GitHub: https://github.com/TiagoSievers/project-gorgon-ptbr | LinkedIn: https://www.linkedin.com/in/tiago-sievers-a175661a8/",
-    "Description": "Language pack comunitário (pt-BR) para Project Gorgon. Inclui tradução de interface, itens e missões. O instalador também adiciona o plugin PgTranslateLive: consulta npcs.yaml antes do Google Translate e salva falas novas ao falar com NPCs (requer internet só para falas ainda não traduzidas). Repositório: https://github.com/TiagoSievers/project-gorgon-ptbr",
+    "Description": "Language pack comunitário (pt-BR) para Project Gorgon. Inclui tradução de interface, itens e missões. O instalador também adiciona o plugin PgTranslateLive: consulta strings_npctalk.json antes do Google Translate e salva falas novas ao falar com NPCs (requer internet só para falas ainda não traduzidas). Repositório: https://github.com/TiagoSievers/project-gorgon-ptbr",
     "Format": 1,
     "LanguageCode": "pt-BR",
     "Name": "Project Gorgon — Português (Brasil)",
-    "Notes": "v0.1.1 — PgTranslateLive v0.10: cache de falas em npcs.yaml (Google só se ainda não traduzido). Projeto fan — não oficial e não afiliado à Elder Game, LLC.",
-    "Version": "0.1.1"
+    "Notes": "v0.1.2 — PgTranslateLive v0.14.38: Interacao + Consultar npc json (strings_npcs.json) por NPC; Falar com cache strings_npctalk.json (Google só se faltar); hooks leves (sem captura de subtexto). Projeto fan — não oficial e não afiliado à Elder Game, LLC.",
+    "Version": "0.1.2"
   }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verifica se BepInEx, plugin e language pack foram instalados corretamente.
+# Verifica se BepInEx, plugin e tradução CDN (Translation/) foram instalados corretamente.
 # Uso: ./scripts/verify-install.sh
 #      GAME_DIR=... STEAM_ROOT=... ./scripts/verify-install.sh
 set -euo pipefail
@@ -35,13 +35,11 @@ fi
 plugin="$GAME_DIR/BepInEx/plugins/PgTranslateLive/PgTranslateLive.dll"
 [[ -f "$plugin" ]] && pass "Plugin PgTranslateLive.dll" || bad "Plugin ausente em BepInEx/plugins/PgTranslateLive/"
 
-translator="$GAME_DIR/BepInEx/plugins/Translator/Translator.dll"
-if [[ -f "$ROOT/dist/Translator.dll" || -f "$translator" ]]; then
-  [[ -f "$translator" ]] && pass "Mod Translator.dll" || bad "Translator.dll ausente em BepInEx/plugins/Translator/"
-  ui_yaml="$GAME_DIR/BepInEx/plugins/Translator/translations/pt-BR/ui.yaml"
-  [[ -f "$ui_yaml" ]] && pass "Traduções YAML pt-BR (ui.yaml)" || note "ui.yaml ausente no Translator"
+legacy="$GAME_DIR/BepInEx/plugins/Translator"
+if [[ -d "$legacy" ]]; then
+  bad "Legado duplicado: $legacy — remova (CDN fica só em Translation/)"
 else
-  note "Translator.dll não faz parte deste pacote (ok em builds antigas)"
+  pass "Sem mod Translator em plugins/ (sem duplicata)"
 fi
 
 cfg="$GAME_DIR/BepInEx/config/com.pg.translatelive.cfg"
@@ -51,21 +49,12 @@ cfg="$GAME_DIR/BepInEx/config/com.pg.translatelive.cfg"
   && pass "Desinstalador na pasta do jogo" \
   || note "Desinstalador ausente na pasta do jogo (reinstale com pacote v0.1.0+)"
 
-linux_trans="$UNITY_LINUX/Translation/version.json"
-proton_ok=0
-for i in "${!PROTON_PREFIXES[@]}"; do
-  prefix="${PROTON_PREFIXES[$i]}"
-  label="${PROTON_LABELS[$i]}"
-  proton_trans="$prefix/Translation/version.json"
-  if [[ -f "$proton_trans" ]]; then
-    pass "Language pack Proton $label ($proton_trans)"
-    proton_ok=1
-  else
-    note "Pack ausente no prefix Proton $label (ok se você não abre essa versão na Steam)"
-  fi
-done
-[[ "$proton_ok" -eq 1 ]] || bad "Pack PT ausente em todos os prefixos Proton"
-[[ -f "$linux_trans" ]] && pass "Language pack Linux ($linux_trans)" || note "Pack Linux nativo ausente (ok se só joga via Proton)"
+linux_trans="$CANONICAL_TRANSLATION_DIR/version.json"
+if [[ -f "$linux_trans" ]]; then
+  pass "Tradução CDN ($CANONICAL_TRANSLATION_DIR/version.json)"
+else
+  bad "Tradução CDN ausente em $CANONICAL_TRANSLATION_DIR"
+fi
 
 if [[ -f "$GAME_DIR/BepInEx/LogOutput.log" ]]; then
   if grep -qi 'error\|exception\|fail' "$GAME_DIR/BepInEx/LogOutput.log" 2>/dev/null; then

@@ -15,7 +15,6 @@ source "$SCRIPT_DIR/install-paths.sh"
 DIST_DLL="$ROOT/dist/PgTranslateLive.dll"
 BUILD_DLL="$ROOT/bepinex-plugin/PgTranslateLive/bin/Release/net6.0/PgTranslateLive.dll"
 DIST_CFG="$ROOT/dist/com.pg.translatelive.cfg"
-DIST_TRANSLATOR_CFG="$ROOT/dist/com.pickteam.translator.cfg"
 PACK_SRC="$ROOT/output/Translation"
 MOD_DL="$ROOT/.cache/mod-downloads"
 
@@ -142,32 +141,40 @@ install_plugin() {
   progress_emit 64 "Plugin instalado"
 }
 
-install_translator() {
-  local dll_src="$ROOT/dist/Translator.dll"
-  local yaml_src="$ROOT/output/pt-BR"
-  local dest_plugin dest_yaml cfg_dir
-  if [[ ! -f "$dll_src" ]]; then
-    info "Translator.dll ausente no pacote — pulando mod Translator"
-    return
+remove_legacy_translator_plugin() {
+  local legacy="$GAME_DIR/BepInEx/plugins/Translator"
+  local legacy_cfg="$GAME_DIR/BepInEx/config/com.pickteam.translator.cfg"
+  if [[ -d "$legacy" ]]; then
+    rm -rf "$legacy"
+    info "Removido legado: $legacy (tradução CDN fica só em Translation/)"
   fi
-  if [[ ! -d "$yaml_src" ]]; then
-    die "output/pt-BR/ não encontrado"
+  if [[ -f "$legacy_cfg" ]]; then
+    rm -f "$legacy_cfg"
+    info "Removido legado: $legacy_cfg"
   fi
-  progress_emit 66 "Instalando Translator + YAML pt-BR…"
-  dest_plugin="$GAME_DIR/BepInEx/plugins/Translator"
-  dest_yaml="$dest_plugin/translations/pt-BR"
-  cfg_dir="$GAME_DIR/BepInEx/config"
-  mkdir -p "$dest_plugin" "$cfg_dir"
-  cp "$dll_src" "$dest_plugin/Translator.dll"
-  rm -rf "$dest_yaml"
-  mkdir -p "$dest_yaml"
-  cp -a "$yaml_src/." "$dest_yaml/"
-  if [[ -f "$DIST_TRANSLATOR_CFG" ]]; then
-    cp "$DIST_TRANSLATOR_CFG" "$cfg_dir/com.pickteam.translator.cfg"
+}
+
+remove_legacy_npctalk_files() {
+  local plugin_yaml="$GAME_DIR/BepInEx/plugins/PgTranslateLive/npcs.yaml"
+  if [[ -f "$plugin_yaml" ]]; then
+    rm -f "$plugin_yaml"
+    info "Removido legado: $plugin_yaml"
   fi
-  info "Translator: $dest_plugin/Translator.dll"
-  info "YAML pt-BR: $dest_yaml"
-  progress_emit 68 "Translator instalado"
+}
+
+remove_translation_legacy_yaml() {
+  local yaml="$CANONICAL_TRANSLATION_DIR/npcs.yaml"
+  if [[ -f "$yaml" ]]; then
+    rm -f "$yaml"
+    info "Removido legado: $yaml (use strings_npctalk.json)"
+  fi
+}
+
+install_translation_pack() {
+  progress_emit 66 "Copiando tradução CDN (language pack PT-BR)…"
+  copy_translation_pack "$PACK_SRC" "$CANONICAL_TRANSLATION_DIR"
+  info "Language pack (único): $CANONICAL_TRANSLATION_DIR"
+  progress_emit 88 "Language pack instalado"
 }
 
 install_game_uninstaller() {
@@ -183,46 +190,26 @@ install_game_uninstaller() {
   info "Desinstalador: $dest"
 }
 
-install_translation_pack() {
-  local i prefix label count pct
-  count="${#PROTON_PREFIXES[@]}"
-  progress_emit 68 "Copiando language pack PT-BR…"
-  mkdir -p "$UNITY_LINUX/Translation"
-  cp -a "$PACK_SRC/." "$UNITY_LINUX/Translation/"
-  info "Language pack (Linux): $UNITY_LINUX/Translation"
-  progress_emit 72 "Language pack (Linux nativo)"
-  for i in "${!PROTON_PREFIXES[@]}"; do
-    prefix="${PROTON_PREFIXES[$i]}"
-    label="${PROTON_LABELS[$i]}"
-    pct=$((74 + (i + 1) * 14 / count))
-    progress_emit "$pct" "Language pack Proton $label…"
-    mkdir -p "$prefix/Translation"
-    cp -a "$PACK_SRC/." "$prefix/Translation/"
-    info "Language pack (Proton $label): $prefix/Translation"
-  done
-  progress_emit 88 "Language pack instalado"
-}
-
-install_translator_yaml() {
-  # Legado: YAML já copiado em install_translator()
-  :
+install_npctalk_json() {
+  local src="$ROOT/output/Translation/strings_npctalk.json"
+  local dest="$CANONICAL_TRANSLATION_DIR/strings_npctalk.json"
+  if [[ ! -f "$src" ]]; then
+    note "strings_npctalk.json ausente no pack — falas vêm do jogo ao jogar"
+    return 0
+  fi
+  if [[ -f "$dest" ]]; then
+    note "strings_npctalk.json do jogo preservado ($dest)"
+    return 0
+  fi
+  mkdir -p "$CANONICAL_TRANSLATION_DIR"
+  cp "$src" "$dest"
+  info "strings_npctalk.json inicial: $dest"
 }
 
 print_installed_paths() {
   local plugin_dir="$GAME_DIR/BepInEx/plugins/PgTranslateLive/PgTranslateLive.dll"
   local cfg="$GAME_DIR/BepInEx/config/com.pg.translatelive.cfg"
-  local linux_trans="$UNITY_LINUX/Translation"
   local log_plugin="$GAME_DIR/BepInEx/LogOutput.log"
-  local i prefix label proton_lines=""
-
-  for i in "${!PROTON_PREFIXES[@]}"; do
-    prefix="${PROTON_PREFIXES[$i]}"
-    label="${PROTON_LABELS[$i]}"
-    proton_lines+="Language pack PT-BR (Proton $label):
-  $prefix/Translation/
-
-"
-  done
 
   cat <<EOF
 
@@ -237,14 +224,14 @@ BepInEx:
   $GAME_DIR/BepInEx/
   $GAME_DIR/winhttp.dll
 
-Plugin PgTranslateLive:
+Plugin PgTranslateLive (Falar ao vivo / Google):
   $plugin_dir
 
-Config do plugin:
+Config PgTranslateLive:
   $cfg
 
-${proton_lines}Language pack PT-BR (Linux nativo):
-  $linux_trans/
+Tradução CDN + falas (único — plugin lê/grava aqui):
+  $CANONICAL_TRANSLATION_DIR/
 
 Log do plugin (após abrir o jogo):
   $log_plugin
@@ -308,11 +295,15 @@ main() {
   require_pack
   progress_emit 22 "Pacote PT-BR verificado"
   install_bepinex
+  progress_emit 54 "Ajustando BepInEx (log mínimo)…"
+  "$SCRIPT_DIR/apply-bepinex-minimal-logging.sh" "$GAME_DIR"
   install_plugin
-  install_translator
+  remove_legacy_translator_plugin
+  remove_legacy_npctalk_files
   install_translation_pack
+  remove_translation_legacy_yaml
   install_game_uninstaller
-  install_translator_yaml
+  install_npctalk_json
   progress_emit 92 "Gerando relatório de instalação…"
   print_finish
   progress_emit 96 "Verificando instalação…"
