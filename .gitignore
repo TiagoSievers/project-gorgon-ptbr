@@ -7,9 +7,8 @@ releases/
 pack/
 copiar/
 
-# --- Staging deletar/ (legado local — só README versionado) ---
-deletar/*
-!deletar/README.md
+# --- Legado local (não publicar) ---
+deletar/
 
 # --- BepInEx zip (~60 MB) — baixar: make fetch-bepinex-vendor ---
 vendor/BepInExPack_IL2CPP.zip
@@ -61,18 +60,13 @@ build/
 *.vmdk
 *.vbox-*
 
-# --- IDE / OS ---
+# --- IDE / OS (Cursor: skills ficam só local; pack copia SKILL.md no assemble) ---
 .idea/
 .vscode/
-.cursor/*
-!.cursor/skills/
-!.cursor/skills/**
-!.cursor/rules/
-!.cursor/rules/**
+.cursor/
 *.swp
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Versionado: output/Translation/, dist/PgTranslateLive.dll, dist/com.pg.translatelive.cfg
-# Legado arquivado: deletar/
+# Versionado: output/Translation/, dist/PgTranslateLive.dll, dist/com.pg.translatelive.cfg, IA_instruction.md
